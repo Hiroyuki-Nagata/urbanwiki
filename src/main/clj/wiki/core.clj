@@ -25,18 +25,18 @@
       ok
       html))
 
-(def wiki-index
-  [{:title "朝ごはんを作る"}
-   {:title "燃えるゴミを出す"}
-   {:title "卵を買って帰る"}
-   {:title "お風呂を洗う"}])
+(def wiki-list
+  ["朝ごはんを作る"
+   "燃えるゴミを出す"
+   "卵を買って帰る"
+   "お風呂を洗う"])
 
 (defn wiki-index-view [req]
-  `("<h1>WIKI 一覧</h1>"
-    "<ul>"
-    ~@(for [{:keys [title]} wiki-index]
-        (str "<li>" title "</li>"))
-    "</ul>"))
+  (clojure.string/join "\n"
+                       ["<h1>WIKI</h1>"
+                        "<ul>"
+                        (clojure.string/join " " (map #(str "<li>" %1 "</li>") wiki-list))
+                        "</ul>"]))
 
 (defn wiki-index [req]
   (-> (wiki-index-view req)
