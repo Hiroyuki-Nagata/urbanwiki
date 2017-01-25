@@ -7,7 +7,7 @@
 (defn handler [req]
   {:status 200
    :headers {"Content-Type" "text/plain"}
-   :body "Hello, world"})
+   :body "Hello, World!!"})
 
 (defn start-server []
   (when-not @server
@@ -23,5 +23,5 @@
     (stop-server)
     (start-server)))
 
-(defn -main []
-  (restart-server))
+(defn -main [& {:as args}]
+  (start-server))

@@ -4,16 +4,26 @@ A play-ground in order to test Maven federation
 
 ## Usage
 
-* Maven
+* Build
 
 ```
+$ lein pom
 $ mvn clojure:compile clojure:run
 ```
 
-* Lein
+* Package
 
 ```
-$ lein run
+$ lein uberjar
+```
+
+* Heroku
+
+```
+$ heroku login
+$ heroku create your-name-todo-clj
+$ heroku git:remote -a your-name-todo-clj
+$ git push heroku master
 ```
 
 ## License
