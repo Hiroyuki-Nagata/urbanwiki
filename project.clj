@@ -4,5 +4,11 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [ring/ring "1.4.0"]
-                 ])
+                 [ring/ring "1.4.0"]]
+  :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.3.8"
+                 {:configuration
+                  [:sourceDirectories [:sourceDirectory "src/main/clj"]]}
+                 ]
+                ]
+                :source-paths ["src/main/clj"]
+                :test-paths ["src/test/clj"])
