@@ -9,9 +9,11 @@
    :headers {"Content-Type" "text/plain"}
    :body "Hello, World!!"})
 
-(defn start-server []
-  (when-not @server
-    (reset! server (server/run-jetty handler {:port 3000 :join? false}))))
+(defn start-server [& {:keys [host port join?]
+                       :or {host "localhost" port 3000 join? false}}]
+  (let [port (if (string? port) (Integer/parseInt port) port)]
+    (when-not @server
+      (reset! server (server/run-jetty handler {:host host :port port :join? join?})))))
 
 (defn stop-server []
   (when @server
@@ -24,4 +26,5 @@
     (start-server)))
 
 (defn -main [& {:as args}]
-  (start-server))
+  (start-server
+   :host (get args "host") :port (get args "port") :join? true))
