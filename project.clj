@@ -7,8 +7,8 @@
                  [ring/ring "1.4.0"]]
   :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.3.8"
                  {:configuration
-                  [:sourceDirectories [:sourceDirectory "src/main/clj"]]}
-                 ]
-                ]
-                :source-paths ["src/main/clj"]
-                :test-paths ["src/test/clj"])
+                  ([:mainClass "wiki.core"]
+                   [:sourceDirectories [:sourceDirectory "src/main/clj"]])}
+                 ]]
+  :source-paths ["src/main/clj"]
+  :test-paths ["src/test/clj"])

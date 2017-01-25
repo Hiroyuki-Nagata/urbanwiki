@@ -1,4 +1,5 @@
 (ns wiki.core
+  (:gen-class main true)
   (:require [ring.adapter.jetty :as server]))
 
 (defonce server (atom nil))
@@ -21,3 +22,6 @@
   (when @server
     (stop-server)
     (start-server)))
+
+(defn -main []
+  (restart-server))
