@@ -1,10 +1,13 @@
 (ns wiki.core
   (:gen-class main true)
-  (:require [ring.adapter.jetty :as server]))
+  (:require [ring.adapter.jetty :as server]
+            [compojure.core :refer [defroutes context GET]]
+            [compojure.route :as route]
+            [ring.adapter.jetty :as server]
+            [ring.util.response :as res]))
 
 (defonce server (atom nil))
 
-;; ライブラリを使わないルーティング実装
 (defn ok [body]
   {:status 200
    :body body})
@@ -43,24 +46,11 @@
       ok
       html))
 
-(def routes
-  {"/" home
-   "/wiki" wiki-index})
-
-(defn match-route [uri]
-  (get routes uri))
-
-;(defn handler [req]
-;  {:status 200
-;   :headers {"Content-Type" "text/plain"}
-;   :body "Hello, World!!"})
-
-(defn handler [req]
-  (let [uri (:uri req)
-        maybe-fn (match-route uri)]
-    (if maybe-fn
-      (maybe-fn req)
-      (not-found))))
+;; compojureを使うルーティング実装
+(defroutes handler
+  (GET "/" req home)
+  (GET "/wiki" req wiki-index)
+  (route/not-found "<h1>404 page not found</h1>"))
 
 (defn start-server [& {:keys [host port join?]
                        :or {host "localhost" port 3000 join? false}}]

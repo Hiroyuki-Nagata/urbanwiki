@@ -6,11 +6,12 @@
   :uberjar-name "wiki-clj.jar"
   :min-lein-version "2.5.3"
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [ring/ring "1.4.0"]]
+                 [ring/ring "1.4.0"]
+                 [compojure/compojure "1.4.0"]]
   :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.3.8"
-                 {:configuration
-                  ([:mainClass "wiki.core"]
-                   [:sourceDirectories [:sourceDirectory "src/main/clj"]])}
+                 {:configuration ([:mainClass "wiki.core"]
+                                  [:sourceDirectories [:sourceDirectory "src/main/clj"]]
+                                  [:args "host localhost port 3000"])}
                  ]]
   :source-paths ["src/main/clj"]
   :test-paths ["src/test/clj"]
