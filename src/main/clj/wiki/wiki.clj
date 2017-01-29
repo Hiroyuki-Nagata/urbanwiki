@@ -7,7 +7,9 @@
    :body body})
 
 (defn html [res]
-  (assoc res :headers {"Content-Type" "text/html; charset=utf-8"}))
+  (assoc res :headers {"Content-Type" "text/html; charset=utf-8"
+                       "Pragma" "no-cache"
+                       "Cache-Control" "no-cache"}))
 
 (defn not-found []
   {:status 404
