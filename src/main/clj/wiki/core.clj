@@ -1,56 +1,13 @@
 (ns wiki.core
   (:gen-class main true)
-  (:require [ring.adapter.jetty :as server]
+  (:require [wiki.wiki :refer [handler]]
+            [ring.adapter.jetty :as server]
             [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
             [ring.adapter.jetty :as server]
             [ring.util.response :as res]))
 
 (defonce server (atom nil))
-
-(defn ok [body]
-  {:status 200
-   :body body})
-
-(defn html [res]
-  (assoc res :headers {"Content-Type" "text/html; charset=utf-8"}))
-
-(defn not-found []
-  {:status 404
-   :body "<h1>404 page not found</1>"})
-
-(defn home-view [req]
-  "<h1>ホーム画面</h1>
-   <a href=\"/wiki\">WIKI 一覧</a>")
-
-(defn home [req]
-  (-> (home-view req)
-      ok
-      html))
-
-(def wiki-list
-  ["朝ごはんを作る"
-   "燃えるゴミを出す"
-   "卵を買って帰る"
-   "お風呂を洗う"])
-
-(defn wiki-index-view [req]
-  (clojure.string/join "\n"
-                       ["<h1>WIKI</h1>"
-                        "<ul>"
-                        (clojure.string/join " " (map #(str "<li>" %1 "</li>") wiki-list))
-                        "</ul>"]))
-
-(defn wiki-index [req]
-  (-> (wiki-index-view req)
-      ok
-      html))
-
-;; compojureを使うルーティング実装
-(defroutes handler
-  (GET "/" req home)
-  (GET "/wiki" req wiki-index)
-  (route/not-found "<h1>404 page not found</h1>"))
 
 (defn start-server [& {:keys [host port join?]
                        :or {host "localhost" port 3000 join? false}}]
