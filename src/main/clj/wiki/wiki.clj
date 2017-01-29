@@ -1,6 +1,7 @@
 (ns wiki.wiki
   (:require [compojure.core :refer [defroutes context GET]]
-            [compojure.route :as route]))
+            [compojure.route :as route]
+            [wiki.view.default.default :as layout]))
 
 (defn ok [body]
   {:status 200
@@ -16,8 +17,10 @@
    :body "<h1>404 page not found</1>"})
 
 (defn home-view [req]
-  "<h1>ホーム画面</h1>
-   <a href=\"/wiki\">WIKI 一覧</a>")
+  (->> [:section.card
+        [:h2 "ホーム画面"]
+        [:a {:href "/wiki"} "WIKI 一覧"]]
+       (layout/common req)))
 
 (defn home [req]
   (-> (home-view req)
@@ -31,11 +34,11 @@
    "お風呂を洗う"])
 
 (defn wiki-index-view [req]
-  (clojure.string/join "\n"
-                       ["<h1>WIKI</h1>"
-                        "<ul>"
-                        (clojure.string/join " " (map #(str "<li>" %1 "</li>") wiki-list))
-                        "</ul>"]))
+  (->> [:section.card
+        [:h2 "WIKI"]
+        [:ul (for [wiki-item wiki-list]
+               [:li wiki-item])]]
+       (layout/common req)))
 
 (defn wiki-index [req]
   (-> (wiki-index-view req)
