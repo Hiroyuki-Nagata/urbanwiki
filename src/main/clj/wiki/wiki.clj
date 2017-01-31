@@ -1,7 +1,7 @@
 (ns wiki.wiki
   (:require [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
-            [wiki.view.default.default :as layout]))
+            [wiki.view.default.default :as default]))
 
 (defn ok [body]
   {:status 200
@@ -20,7 +20,7 @@
   (->> [:section.card
         [:h2 "ホーム画面"]
         [:a {:href "/wiki"} "WIKI 一覧"]]
-       (layout/common req)))
+       (default/top req)))
 
 (defn home [req]
   (-> (home-view req)
@@ -34,11 +34,7 @@
    "お風呂を洗う"])
 
 (defn wiki-index-view [req]
-  (->> [:section.card
-        [:h2 "WIKI"]
-        [:ul (for [wiki-item wiki-list]
-               [:li wiki-item])]]
-       (layout/common req)))
+  (->> (default/common req)))
 
 (defn wiki-index [req]
   (-> (wiki-index-view req)
