@@ -1,5 +1,8 @@
 (ns wiki.core
   (:gen-class main true)
+  (:use
+   clojure.tools.logging
+   clj-logging-config.log4j)
   (:require [environ.core :refer [env]]
             [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
@@ -41,5 +44,13 @@
     (start-server)))
 
 (defn -main [& {:as args}]
+  (set-logger!)
+  (info "Just a plain logging message, you should see the level at the beginning")
+
+  ;; プラグインパッケージからinstall関数をテストで呼び出し
+  (require 'plugins.core.install)
+  (println (keys (ns-publics 'plugins.core.install)))
+  (plugins.core.install/install)
+
   (start-server
    :host (get args "host") :port (get args "port") :join? true))
