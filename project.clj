@@ -19,7 +19,7 @@
                  ]]
   :source-paths ["src/main/clj"]
   :test-paths ["src/test/clj"]
-  :resource-paths ["src/main/resources"]
+  :resource-paths ["resources"]
   :profiles
   {:dev {:env {:dev true }}
    :uberjar {:aot :all
