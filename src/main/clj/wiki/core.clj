@@ -1,19 +1,32 @@
 (ns wiki.core
   (:gen-class main true)
-  (:require [wiki.wiki :refer [handler]]
+  (:require [environ.core :refer [env]]
+            [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
-            [compojure.core :refer [defroutes context GET]]
-            [compojure.route :as route]
             [ring.adapter.jetty :as server]
-            [ring.util.response :as res]))
+            [ring.util.response :as res]
+            [wiki.middleware :refer [wrap-dev]]
+            [wiki.wiki :refer [wiki-routes]]))
 
 (defonce server (atom nil))
+
+(defn- wrap [handler middleware opt]
+  (if (true? opt)
+    (middleware handler)
+    (if opt
+      (middleware handler opt)
+      handler)))
+
+(def app
+  (-> (routes
+       wiki-routes)
+      wrap-dev))
 
 (defn start-server [& {:keys [host port join?]
                        :or {host "localhost" port 3000 join? false}}]
   (let [port (if (string? port) (Integer/parseInt port) port)]
     (when-not @server
-      (reset! server (server/run-jetty handler {:host host :port port :join? join?})))))
+      (reset! server (server/run-jetty wiki-routes {:host host :port port :join? join?})))))
 
 (defn stop-server []
   (when @server
