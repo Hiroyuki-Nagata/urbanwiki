@@ -17,11 +17,24 @@
   (html5
    (default-header "FreeStyleWiki - top")
    [:body
-    [:header.top-bar.bg-green.depth-3 "FreeStyleWiki!"]
-    [:main body]]))
+    [:h1]
+    [:div.main
+     [:div.header]
+     [:div.day
+      [:div.body
+       [:div.section]]
+      [:div.comment]]]
+    [:div.sidebar]]))
 
 (defn common [req]
   (html5
    (default-header "FreeStyleWiki - wiki")
    [:body
-    [:header.top-bar.bg-green.depth-3 "FreeStyleWiki!"]]))
+    [:h1]
+    [:div.main
+     [:div.header]
+     [:div.day
+      [:div.body
+       [:div.section]]
+      [:div.comment]]]
+    [:div.sidebar]]))
