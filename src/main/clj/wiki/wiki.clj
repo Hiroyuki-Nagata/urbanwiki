@@ -42,7 +42,7 @@
       html))
 
 ;; compojureを使うルーティング実装
-(defroutes handler
+(defroutes wiki-routes
   (GET "/" req home)
   (GET "/wiki" req wiki-index)
   (route/not-found "<h1>404 page not found</h1>"))

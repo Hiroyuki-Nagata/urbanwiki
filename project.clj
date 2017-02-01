@@ -9,7 +9,9 @@
                  [ring/ring "1.4.0"]
                  [compojure/compojure "1.4.0"]
                  [clj-http/clj-http "2.3.0"]
-                 [hickory/hickory "0.7.0"]]
+                 [hickory/hickory "0.7.0"]
+                 [environ/environ "1.0.3"]
+                 [prone/prone "0.8.2"]]
   :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.3.8"
                  {:configuration ([:mainClass "wiki.core"]
                                   [:sourceDirectories [:sourceDirectory "src/main/clj"]]
@@ -17,6 +19,8 @@
                  ]]
   :source-paths ["src/main/clj"]
   :test-paths ["src/test/clj"]
+  :resource-paths ["src/main/resources"]
   :profiles
-  {:uberjar {:aot :all
+  {:dev {:env {:dev true }}
+   :uberjar {:aot :all
              :main wiki.core}})
