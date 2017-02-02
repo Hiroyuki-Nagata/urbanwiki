@@ -6,11 +6,11 @@
   (:require [environ.core :refer [env]]
             [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
-            [ring.adapter.jetty :as server]
             [ring.util.response :as res]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [wiki.plugin.core.install]
             [wiki.middleware :refer [wrap-dev]]
-            [wiki.wiki :refer [wiki-routes]]
-            [ring.middleware.resource :refer [wrap-resource]]))
+            [wiki.wiki :refer [wiki-routes]]))
 
 (defonce server (atom nil))
 
@@ -48,9 +48,8 @@
   (info "Just a plain logging message, you should see the level at the beginning")
 
   ;; プラグインパッケージからinstall関数をテストで呼び出し
-  (require 'plugins.core.install)
-  (println (keys (ns-publics 'plugins.core.install)))
-  (plugins.core.install/install)
+  (println (keys (ns-publics 'wiki.plugin.core.install)))
+  (wiki.plugin.core.install/install)
 
   (start-server
    :host (get args "host") :port (get args "port") :join? true))

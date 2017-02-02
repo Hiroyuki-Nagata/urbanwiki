@@ -18,8 +18,8 @@
                                   [:sourceDirectories [:sourceDirectory "src/main/clj"]]
                                   [:args "host localhost port 3000"])}
                  ]]
-  :source-paths ["src/main/clj"]
-  :test-paths ["src/test/clj"]
+  :source-paths ["src/main/clojure"]
+  :test-paths ["src/test/clojure"]
   :resource-paths ["resources"]
   :profiles
   {:dev {:env {:dev true }}
