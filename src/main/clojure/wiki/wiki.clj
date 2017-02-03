@@ -16,6 +16,11 @@
   ([] (db/load-config :script_name))
   ([m] (str (db/load-config :script_name) "?" (form-encode m))))
 
+;; ページにジャンプするためのURLを生成するユーティリティメソッドです。
+;; 引数としてページ名を渡します。
+(defn create-page-url [page]
+  (create-url {:page page}))
+
 ;; メニュー項目を追加します。既に同じ名前の項目が登録されている場合は上書きします。
 ;; 優先度が高いほど左側に表示されます。
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)

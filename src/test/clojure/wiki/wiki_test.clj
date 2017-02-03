@@ -9,7 +9,10 @@
     (is (= (load-config :script_name) (create-url))))
   (testing "We must create wiki parameters with arguments"
     (is (= (str (load-config :script_name) "?action=HOGE&type=1")
-           (create-url {:action "HOGE" :type "1"})))))
+           (create-url {:action "HOGE" :type "1"}))))
+  (testing "We also create wiki pages from a function"
+    (is (= (str (load-config :script_name) "?page=FrontPage")
+           (create-page-url "FrontPage")))))
 
 (deftest add-menu-test
   (init-config)
