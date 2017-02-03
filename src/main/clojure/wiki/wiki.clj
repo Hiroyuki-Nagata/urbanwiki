@@ -14,6 +14,9 @@
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 (defn add-menu [name href weight nofollow]
   (set-logger!)
+  (default-storage/append-config
+   {:menu
+    {:name name, :href href, :weight weight, :nofollow nofollow }})
   (info (str "add-menu: name: " name ", href: " href ", weight: " weight ", nofollow: " nofollow)))
 
 (defn ok [body]

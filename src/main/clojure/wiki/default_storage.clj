@@ -27,6 +27,9 @@
 (defn update-state [key val]
   (swap! wiki-state assoc key val))
 
+(defn update-each-state [m]
+  (doseq [[k v] m] (update-state k v)))
+
 (defn load-default-config []
   (cfg/load wiki-config-rsc))
 
@@ -49,6 +52,28 @@
   (debug (str "save-config: " m))
   (let [updated (merge m (get-state))]
     (doseq [[k v] updated] (update-state k v))))
+
+;; キーで指定されたハッシュマップに新たにコンフィグを追加
+;; 適用できるのはベクタ型のみにしたい
+(defn append-config [m]
+  (set-logger!)
+  (debug (str "append-config: " m))
+  (doseq [[k v] m]
+    (let [curvec (get-state k)
+          conjed (conj curvec v)
+          parent (hash-map k conjed)]
+      (debug (str "current: " curvec))
+      (debug (str "append : " v))
+      (debug (str "after  : " parent))
+      (update-each-state parent))))
+
+  ;;(doseq [[k v] m] (save-config (hash-map k (conj (load-config k) v)))))
+
+;; キーで指定されたハッシュマップからコンフィグを削除
+;;(defn remove-config [m]
+;;  (set-logger!)
+;;  (debug (str "remove-config: " m))
+;;  (doseq [[k v] m] (conj (load-config k) v)))
 
 ;; コンフィグの初期値を読み出す
 (defn init-config []

@@ -26,3 +26,10 @@
   (testing "We can clear wiki's state"
     (clear-state)
     (is (= {} (load-config)))))
+
+(deftest append-config-test
+  (init-config)
+  (testing "We should append config with hashmap style"
+    (append-config {:menu {:name "ログイン"}})
+    (append-config {:menu {:name "新規"}})
+    (not (= nil (load-config)))))
