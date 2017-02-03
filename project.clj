@@ -11,6 +11,7 @@
                  [clj-http/clj-http "2.3.0"]
                  [clj-logging-config/clj-logging-config "1.9.12"]
                  [hickory/hickory "0.7.0"]
+                 [levand/immuconf "0.1.0"]
                  [environ/environ "1.0.3"]
                  [prone/prone "0.8.2"]]
   :source-paths ["src/main/clojure"]
