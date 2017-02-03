@@ -3,6 +3,14 @@
             [wiki.wiki :refer :all]
             [wiki.default-storage :refer :all]))
 
+(deftest create-url-test
+  (init-config)
+  (testing "We should create wiki parameters without arguments"
+    (is (= (load-config :script_name) (create-url))))
+  (testing "We must create wiki parameters with arguments"
+    (is (= (str (load-config :script_name) "?action=HOGE&type=1")
+           (create-url {:action "HOGE" :type "1"})))))
+
 (deftest add-menu-test
   (init-config)
   (testing "We should call add-menu"

@@ -5,16 +5,23 @@
    clojure.tools.logging
    clj-logging-config.log4j)
   (:require [compojure.core :refer [defroutes context GET]]
+            [ring.util.codec :refer [form-encode]]
             [compojure.route :as route]
-            [wiki.default-storage :as default-storage]
+            [wiki.default-storage :as db]
             [wiki.view.default.default :as default]))
+
+;; 任意のURLを生成するためのユーティリティメソッドです。
+;; 引数としてパラメータのハッシュリファレンスを渡します。
+(defn create-url
+  ([] (db/load-config :script_name))
+  ([m] (str (db/load-config :script_name) "?" (form-encode m))))
 
 ;; メニュー項目を追加します。既に同じ名前の項目が登録されている場合は上書きします。
 ;; 優先度が高いほど左側に表示されます。
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 (defn add-menu [name href weight nofollow]
   (set-logger!)
-  (default-storage/append-config
+  (db/append-config
    {:menu
     {:name name, :href href, :weight weight, :nofollow nofollow }})
   (info (str "add-menu: name: " name ", href: " href ", weight: " weight ", nofollow: " nofollow)))
