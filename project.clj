@@ -13,13 +13,37 @@
                  [hickory/hickory "0.7.0"]
                  [environ/environ "1.0.3"]
                  [prone/prone "0.8.2"]]
-  :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.3.8"
-                 {:configuration ([:mainClass "wiki.core"]
-                                  [:sourceDirectories [:sourceDirectory "src/main/clj"]]
-                                  [:args "host localhost port 3000"])}
-                 ]]
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
+  :java-source-paths ["src/main/java"]
+  :pom-plugins [[com.theoryinpractise/clojure-maven-plugin "1.3.8"
+                 {:configuration ([:mainClass "wiki.core"]
+                                  [:sourceDirectories [:sourceDirectory "src/main/clojure"]]
+                                  [:testSourceDirectories [:testSourceDirectory "src/test/clojure"]]
+                                  [:args "host localhost port 3000"])}
+                 ]
+                [org.apache.maven.plugins/maven-shade-plugin "2.4.3"
+                 [:executions [:execution ([:phase "package"]
+                                           [:goals [:goal "shade"]]
+                                           [:configuration
+                                            [:transformers
+                                             [:transformer
+                                              {:implementation "org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"}]
+                                             [:transformer
+                                              {:implementation "org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"}]
+                                             [:transformer
+                                              {:implementation "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"}
+                                              [:mainClass "wiki.core"]]
+                                             ]
+                                            [:finalName "wiki-clj"] ;"${project.artifactId}-${project.version}-standalone"]
+                                            [:filters
+                                             [:filter
+                                              [:includes
+                                               [:include "**/*.js"]
+                                               [:include "**/*.class"]
+                                               [:include "**/*.xml"]]
+                                              [:excludes
+                                               [:exclude "**/*.clj"]]]]])]]]]
   :resource-paths ["resources"]
   :profiles
   {:dev {:env {:dev true }}

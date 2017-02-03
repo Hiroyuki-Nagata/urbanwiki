@@ -3,6 +3,9 @@
    :init init
    :prefix "-"
    :main false)
+  (:use
+   clojure.tools.logging
+   clj-logging-config.log4j)
   (:require [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
             [wiki.view.default.default :as default]))
@@ -14,7 +17,9 @@
 ; 優先度が高いほど左側に表示されます。
 ; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 (defn add-menu [name href weight nofollow]
-  (setfield this :menu (conj )))
+  (set-logger!)
+  ;(setfield this :menu (conj ))
+  (info (str "add-menu name: " name)))
 
 (defn ok [body]
   {:status 200

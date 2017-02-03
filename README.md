@@ -1,20 +1,23 @@
 # wiki
 
-A play-ground in order to test Maven federation
+A play-ground in order to create fswiki clone
 
 ## Usage
 
-* Build
+* Build & Package with Leiningen
 
 ```
-$ lein pom
-$ mvn clojure:compile clojure:run
+$ lein check                  # Compile clojure sources
+$ lein uberjar                # Create uberjar
 ```
 
-* Package
+* Build & Package with Maven
 
 ```
-$ lein uberjar
+$ lein pom                    # Generate pom.xml
+$ mvn clojure:compile         # Compile clojure sources
+$ mvn clojure:test            # Testing clojure sources
+$ mvn clojure:compile package # Create uberjar with Maven
 ```
 
 * Heroku
