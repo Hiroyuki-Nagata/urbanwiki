@@ -10,7 +10,9 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [wiki.plugin.core.install]
             [wiki.middleware :refer [wrap-dev]]
-            [wiki.wiki :refer [wiki-routes]]))
+            [wiki.wiki :refer [wiki-routes]]
+            [wiki.wiki :as wiki-instance]
+            [wiki.default-storage :as db]))
 
 (defonce server (atom nil))
 
@@ -43,13 +45,16 @@
     (stop-server)
     (start-server)))
 
+(defonce wiki-instance (atom nil))
+
 (defn -main [& {:as args}]
   (set-logger!)
   (info "Just a plain logging message, you should see the level at the beginning")
 
+  ;; ストレージを初期化
+  (db/init-config)
   ;; プラグインパッケージからinstall関数をテストで呼び出し
-  (println (keys (ns-publics 'wiki.plugin.core.install)))
-  (wiki.plugin.core.install/install)
+  (wiki.plugin.core.install/install @wiki-instance)
 
   (start-server
    :host (get args "host") :port (get args "port") :join? true))
