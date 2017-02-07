@@ -55,12 +55,6 @@
       ok
       html))
 
-(def wiki-list
-  ["朝ごはんを作る"
-   "燃えるゴミを出す"
-   "卵を買って帰る"
-   "お風呂を洗う"])
-
 (defn wiki-index-view [req]
   (->> (default/common req)))
 
@@ -72,6 +66,6 @@
 ;; compojureを使うルーティング実装
 (defroutes wiki-routes
   (GET "/" req home)
-  (GET "/wiki" req wiki-index)
+  (GET "/wiki.cgi" req wiki-index)
   (route/resources "/")
   (route/not-found "<h1>404 page not found</h1>"))
