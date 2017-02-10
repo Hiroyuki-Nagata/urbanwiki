@@ -60,8 +60,7 @@
   ;; メニューを取得
   (let [menus (db/load-config :menu) wiki-header (header/header-tmpl menus)]
     (set-logger!)
-    (info (str "Get menu items: " (count menus)))
-    (debug (str "Get menu items: " wiki-header))
+    (debug (str "Get menu items: " (count menus)))
     (->> (default/common req wiki-header))))
 
 (defn wiki-index [req]
