@@ -8,7 +8,8 @@
             [ring.util.codec :refer [form-encode]]
             [compojure.route :as route]
             [wiki.default-storage :as db]
-            [wiki.view.default.default :as default]))
+            [wiki.view.default.default :as default]
+            [wiki.view.default.header :as header]))
 
 ;; 任意のURLを生成するためのユーティリティメソッドです。
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
@@ -56,7 +57,12 @@
       html))
 
 (defn wiki-index-view [req]
-  (->> (default/common req)))
+  ;; メニューを取得
+  (let [menus (db/load-config :menu) wiki-header (header/header-tmpl menus)]
+    (set-logger!)
+    (info (str "Get menu items: " (count menus)))
+    (debug (str "Get menu items: " wiki-header))
+    (->> (default/common req wiki-header))))
 
 (defn wiki-index [req]
   (-> (wiki-index-view req)
