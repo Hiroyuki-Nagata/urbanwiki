@@ -1,4 +1,5 @@
 {:menu []
+ :hook []
  :frontpage "FrontPage"
  :script_name "wiki.cgi"
  :nest {:test "testing"}}

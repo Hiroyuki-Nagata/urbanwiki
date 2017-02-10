@@ -11,6 +11,23 @@
             [wiki.view.default.default :as default]
             [wiki.view.default.header :as header]))
 
+;; プラグインのインスタンスを取得します。wiki.cljで内部的に使用されるメソッドです。
+;; プラグイン開発において通常、このメソッドを使用する必要はありません。
+(defn get-plugin-instance [clazz]
+  "")
+
+;; フックプラグインを登録します。登録したプラグインはdo-hookメソッドで呼び出します。
+(defn add-hook [name obj]
+  (db/append-config {:hook {:name name :obj obj}}))
+
+;; add_hookメソッドで登録されたフックプラグインを実行します。
+;; 引数にはフックの名前に加えて任意のパラメータを渡すことができます。
+;; これらのパラメータは呼び出されるクラスのhookメソッドの引数として渡されます。
+(defn do-hook [name]
+  (for [clazz (:name (db/load-config :hook))]
+    (let [obj (get-plugin-instance clazz)]
+      (. obj hook)))) ;; TODO: 必要ならここに可変長引数
+
 ;; 任意のURLを生成するためのユーティリティメソッドです。
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
 (defn create-url
@@ -45,17 +62,6 @@
   {:status 404
    :body "<h1>404 page not found</1>"})
 
-(defn home-view [req]
-  (->> [:section.card
-        [:h2 "ホーム画面"]
-        [:a {:href "/wiki"} "WIKI 一覧"]]
-       (default/top req)))
-
-(defn home [req]
-  (-> (home-view req)
-      ok
-      html))
-
 (defn wiki-index-view [req]
   ;; メニューを取得
   (let [menus (db/load-config :menu) wiki-header (header/header-tmpl menus)]
@@ -70,7 +76,7 @@
 
 ;; compojureを使うルーティング実装
 (defroutes wiki-routes
-  (GET "/" req home)
+  (GET "/" req wiki-index)
   (GET "/wiki.cgi" req wiki-index)
   (route/resources "/")
   (route/not-found "<h1>404 page not found</h1>"))
