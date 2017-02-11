@@ -5,17 +5,13 @@
    clojure.walk
    clojure.tools.logging
    clj-logging-config.log4j)
-  (:require [compojure.core :refer [defroutes context GET]]
+  (:require [clojure.string :refer [blank?]]
+            [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
             [ring.util.codec :refer [form-encode form-decode]]
             [wiki.default-storage :as db]
             [wiki.view.default.default :as default]
             [wiki.view.default.header :as header]))
-
-;; プラグインのインスタンスを取得します。wiki.cljで内部的に使用されるメソッドです。
-;; プラグイン開発において通常、このメソッドを使用する必要はありません。
-(defn get-plugin-instance [class]
-  "")
 
 ;; フックプラグインを登録します。登録したプラグインはdo-hookメソッドで呼び出します。
 (defn add-hook [name obj]
@@ -26,20 +22,30 @@
 ;; これらのパラメータは呼び出されるクラスのhookメソッドの引数として渡されます。
 (defn do-hook [name]
   (for [class (:name (db/load-config :hook))]
-    (let [obj (get-plugin-instance class)]
-      (. obj hook)))) ;; TODO: 必要ならここに可変長引数
+    (let [s (str class "/hook")
+          k (keyword s)
+          ns-sym (symbol (namespace k))
+          nm-sym (symbol (name k))]
+      ((ns-resolve ns-sym nm-sym) nil))))
 
 ;; アクションハンドラプラグインを追加します。
 ;; リクエスト時にactionというパラメータが一致するアクションが呼び出されます。
 (defn add-handler [action class]
-  (db/append-config {:handler {action class}})
-  (db/append-config {:handler_permission {:action 1}}))
+  (let [new-handler (merge {action class} (db/load-config :handler))
+        new-handler-permission (merge {action 1} (db/load-config :handler_permission))]
+    (db/update-each-state {:handler new-handler})
+    (db/update-each-state {:handler_permission new-handler-permission})))
 
 ;; add_handlerメソッドで登録されたアクションハンドラを実行します。
 ;; アクションハンドラのdo_actionメソッドの戻り値を返します。
 (defn call-handler [action]
-  ;; my $obj = $self->get_plugin_instance($self->{"handler"}->{$action});
-  )
+  (when (and (not (blank? action)) (not (blank? (get (db/load-config :handler) action))))
+    (let [n (get (db/load-config :handler) action)
+          s (str n "/do-action")
+          k (keyword s)
+          ns-sym (symbol (namespace k))
+          nm-sym (symbol (name k))]
+      ((ns-resolve ns-sym nm-sym) nil))))
 
 ;; 任意のURLを生成するためのユーティリティメソッドです。
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
@@ -79,11 +85,12 @@
   (set-logger!)
   ;; パラメーターをチェック(Rubyみたいに)
   ;; actionがあればプラグインに対してcall-handlerして内容を受け取る
-  (let [params (keywordize-keys (form-decode (:query-string req)))
-        action (:action params)
-        contents (call-handler action)]
-    (debug (str "action: " action))
-    (debug (str "contents: " contents)))
+  (when (not (blank? (:query-string req)))
+    (let [params (keywordize-keys (form-decode (:query-string req)))
+          action (:action params)
+          contents (call-handler action)]
+      (debug (str "action: " action))
+      (debug (str "contents: " contents))))
 
   ;; プラグインを初期化
   ;; あまりadd-hookでinitializeを登録するプラグインがなさそう

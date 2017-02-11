@@ -1,5 +1,5 @@
-{:handler []
- :handler_permission []
+{:handler {}
+ :handler_permission {}
  :menu []
  :hook []
  :frontpage "FrontPage"

@@ -67,14 +67,6 @@
       (debug (str "after  : " parent))
       (update-each-state parent))))
 
-  ;;(doseq [[k v] m] (save-config (hash-map k (conj (load-config k) v)))))
-
-;; キーで指定されたハッシュマップからコンフィグを削除
-;;(defn remove-config [m]
-;;  (set-logger!)
-;;  (debug (str "remove-config: " m))
-;;  (doseq [[k v] m] (conj (load-config k) v)))
-
 ;; コンフィグの初期値を読み出す
 (defn init-config []
   (set-logger!)

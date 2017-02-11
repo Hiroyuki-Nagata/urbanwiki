@@ -24,15 +24,13 @@
 
 (deftest add-hook-test
   (init-config)
-
   ;; wiki.plugin.core.handler-test
   ;; ここにテスト用のアクションハンドラを用意している
   (testing "We need to add hook scripts"
     (add-handler "TEST" "wiki.plugin.core.handler-test")
-    (is (= (load-config :handler) [{"TEST" "wiki.plugin.core.handler-test"}])))
-
+    (is (= (load-config :handler) {"TEST" "wiki.plugin.core.handler-test"})))
   ;; wiki.plugin.core.handler-test
   ;; 登録されたhandlerに対して呼び出しを行う
   (testing "We should call handler with call-handler"
     (let [response (call-handler "TEST")]
-      (not (= nil response)))))
+      (is (= "Hello, Hook system !" response)))))
