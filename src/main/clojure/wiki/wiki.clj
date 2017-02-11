@@ -26,6 +26,8 @@
           k (keyword s)
           ns-sym (symbol (namespace k))
           nm-sym (symbol (name k))]
+      (debug (str "Calling namespace & func: " s))
+      (require ns-sym)
       ((ns-resolve ns-sym nm-sym) nil))))
 
 ;; アクションハンドラプラグインを追加します。
@@ -45,6 +47,8 @@
           k (keyword s)
           ns-sym (symbol (namespace k))
           nm-sym (symbol (name k))]
+      (debug (str "Calling namespace & func: " s))
+      (require ns-sym)
       ((ns-resolve ns-sym nm-sym) nil))))
 
 ;; 任意のURLを生成するためのユーティリティメソッドです。
