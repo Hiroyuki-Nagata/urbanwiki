@@ -1,4 +1,6 @@
-{:menu []
+{:handler []
+ :handler_permission []
+ :menu []
  :hook []
  :frontpage "FrontPage"
  :script_name "wiki.cgi"

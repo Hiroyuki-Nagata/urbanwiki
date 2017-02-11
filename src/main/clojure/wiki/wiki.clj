@@ -2,18 +2,19 @@
   (:gen-class
    :main false)
   (:use
+   clojure.walk
    clojure.tools.logging
    clj-logging-config.log4j)
   (:require [compojure.core :refer [defroutes context GET]]
-            [ring.util.codec :refer [form-encode]]
             [compojure.route :as route]
+            [ring.util.codec :refer [form-encode form-decode]]
             [wiki.default-storage :as db]
             [wiki.view.default.default :as default]
             [wiki.view.default.header :as header]))
 
 ;; プラグインのインスタンスを取得します。wiki.cljで内部的に使用されるメソッドです。
 ;; プラグイン開発において通常、このメソッドを使用する必要はありません。
-(defn get-plugin-instance [clazz]
+(defn get-plugin-instance [class]
   "")
 
 ;; フックプラグインを登録します。登録したプラグインはdo-hookメソッドで呼び出します。
@@ -24,9 +25,21 @@
 ;; 引数にはフックの名前に加えて任意のパラメータを渡すことができます。
 ;; これらのパラメータは呼び出されるクラスのhookメソッドの引数として渡されます。
 (defn do-hook [name]
-  (for [clazz (:name (db/load-config :hook))]
-    (let [obj (get-plugin-instance clazz)]
+  (for [class (:name (db/load-config :hook))]
+    (let [obj (get-plugin-instance class)]
       (. obj hook)))) ;; TODO: 必要ならここに可変長引数
+
+;; アクションハンドラプラグインを追加します。
+;; リクエスト時にactionというパラメータが一致するアクションが呼び出されます。
+(defn add-handler [action class]
+  (db/append-config {:handler {action class}})
+  (db/append-config {:handler_permission {:action 1}}))
+
+;; add_handlerメソッドで登録されたアクションハンドラを実行します。
+;; アクションハンドラのdo_actionメソッドの戻り値を返します。
+(defn call-handler [action]
+  ;; my $obj = $self->get_plugin_instance($self->{"handler"}->{$action});
+  )
 
 ;; 任意のURLを生成するためのユーティリティメソッドです。
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
@@ -63,9 +76,21 @@
    :body "<h1>404 page not found</1>"})
 
 (defn wiki-index-view [req]
+  (set-logger!)
+  ;; パラメーターをチェック(Rubyみたいに)
+  ;; actionがあればプラグインに対してcall-handlerして内容を受け取る
+  (let [params (keywordize-keys (form-decode (:query-string req)))
+        action (:action params)
+        contents (call-handler action)]
+    (debug (str "action: " action))
+    (debug (str "contents: " contents)))
+
+  ;; プラグインを初期化
+  ;; あまりadd-hookでinitializeを登録するプラグインがなさそう
+  (do-hook "initialize")
   ;; メニューを取得
   (let [menus (db/load-config :menu) wiki-header (header/header-tmpl menus)]
-    (set-logger!)
+
     (debug (str "Get menu items: " (count menus)))
     (->> (default/common req wiki-header))))
 

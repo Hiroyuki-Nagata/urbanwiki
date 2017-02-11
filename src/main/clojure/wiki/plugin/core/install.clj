@@ -6,7 +6,6 @@
   (:require [wiki.default-storage :as db]
             [wiki.wiki :as wiki]))
 
-; TODO: wikiのインスタンスを渡す必要がある
 (defn install [wiki]
   (set-logger!)
   (info "Install core plugin...")
