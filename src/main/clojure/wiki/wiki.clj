@@ -8,10 +8,28 @@
   (:require [clojure.string :refer [blank?]]
             [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
+            [flatland.useful.utils :refer [thread-local]]
             [ring.util.codec :refer [form-encode form-decode]]
             [wiki.default-storage :as db]
             [wiki.view.default.default :as default]
             [wiki.view.default.header :as header]))
+
+;; スレッドごとのwiki情報を管理する
+(defonce wiki-initial-state {:title "" :edit 0 })
+(def wiki-local-state (thread-local (atom wiki-initial-state)))
+
+(defn clear-local-state []
+  (swap! wiki-local-state (fn [p] wiki-initial-state)))
+
+(defn get-local-state
+  ([] @wiki-local-state)
+  ([key] (@wiki-local-state key)))
+
+(defn update-local-state [key val]
+  (swap! wiki-local-state assoc key val))
+
+(defn update-each-state [m]
+  (doseq [[k v] m] (update-local-state k v)))
 
 ;; フックプラグインを登録します。登録したプラグインはdo-hookメソッドで呼び出します。
 (defn add-hook [name obj]
@@ -72,6 +90,16 @@
     {:name name, :href href, :weight weight, :nofollow nofollow }})
   (info (str "add-menu: name: " name ", href: " href ", weight: " weight ", nofollow: " nofollow)))
 
+;; アクションハンドラ中でタイトルを設定する場合に使用します。
+;; 編集系の画面の場合、第二引数に1を指定してください。
+;; ロボット対策用に以下のMETAタグが出力されます。
+(defn set-title [arg & {:keys [title edit] :or {title "" edit 0}}]
+  (update-local-state :title title)
+  (update-local-state :edit edit))
+
+(defn get-title []
+  (get-local-state :title))
+
 (defn ok [body]
   {:status 200
    :body body})
@@ -101,7 +129,6 @@
   (do-hook "initialize")
   ;; メニューを取得
   (let [menus (db/load-config :menu) wiki-header (header/header-tmpl menus)]
-
     (debug (str "Get menu items: " (count menus)))
     (->> (default/common req wiki-header))))
 
