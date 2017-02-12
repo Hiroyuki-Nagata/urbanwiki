@@ -4,18 +4,18 @@
   (:use
    clojure.walk
    clojure.tools.logging
-   clj-logging-config.log4j)
+   clj-logging-config.log4j
+   clojure.test flatland.useful.utils)
   (:require [clojure.string :refer [blank?]]
             [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
-            [flatland.useful.utils :refer [thread-local]]
             [ring.util.codec :refer [form-encode form-decode]]
             [wiki.default-storage :as db]
             [wiki.view.default.default :as default]
             [wiki.view.default.header :as header]))
 
 ;; スレッドごとのwiki情報を管理する
-(defonce wiki-initial-state {:title "" :edit 0 })
+(defonce wiki-initial-state {:title "" :edit 0 :params {}})
 (def wiki-local-state (thread-local (atom wiki-initial-state)))
 
 (defn clear-local-state []
@@ -26,10 +26,13 @@
   ([key] (@wiki-local-state key)))
 
 (defn update-local-state [key val]
-  (swap! wiki-local-state assoc key val))
+  (swap! @wiki-local-state assoc key val))
 
 (defn update-each-state [m]
   (doseq [[k v] m] (update-local-state k v)))
+
+(defn params []
+  (:params @@wiki-local-state))
 
 ;; フックプラグインを登録します。登録したプラグインはdo-hookメソッドで呼び出します。
 (defn add-hook [name obj]
@@ -117,9 +120,8 @@
   (set-logger!)
   ;; パラメーターをチェック(Rubyみたいに)
   ;; actionがあればプラグインに対してcall-handlerして内容を受け取る
-  (when (not (blank? (:query-string req)))
-    (let [params (keywordize-keys (form-decode (:query-string req)))
-          action (:action params)
+  (when (not (= 0 count (params)))
+    (let [action (:action (params))
           contents (call-handler action)]
       (debug (str "action: " action))
       (debug (str "contents: " contents))))
@@ -133,6 +135,11 @@
     (->> (default/common req wiki-header))))
 
 (defn wiki-index [req]
+  ;; 事前にこのスレッドにおけるクエリをparamsに格納
+  (when (not (blank? (:query-string req)))
+    (let [ps (keywordize-keys (form-decode (:query-string req)))]
+      (debug (str "params: " ps))
+      (update-local-state :params ps)))
   (-> (wiki-index-view req)
       ok
       html))
