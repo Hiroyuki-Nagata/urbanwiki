@@ -62,7 +62,7 @@
 ;; add_handlerメソッドで登録されたアクションハンドラを実行します。
 ;; アクションハンドラのdo_actionメソッドの戻り値を返します。
 (defn call-handler [action]
-  (when (and (not (blank? action)) (not (blank? (get (db/load-config :handler) action))))
+  (when (not (blank? (get (db/load-config :handler) action)))
     (let [n (get (db/load-config :handler) action)
           s (str n "/do-action")
           k (keyword s)
@@ -70,7 +70,8 @@
           nm-sym (symbol (name k))]
       (debug (str "Calling namespace & func: " s))
       (require ns-sym)
-      ((ns-resolve ns-sym nm-sym) nil))))
+      ;; threadごとのwikiの状態を渡す
+      ((ns-resolve ns-sym nm-sym) @@wiki-local-state))))
 
 ;; 任意のURLを生成するためのユーティリティメソッドです。
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
