@@ -104,6 +104,8 @@
 (defn get-title []
   (get-local-state :title))
 
+(defn process-wiki [source mainflg])
+
 (defn ok [body]
   {:status 200
    :body body})
