@@ -5,7 +5,8 @@
    clojure.walk
    clojure.tools.logging
    clj-logging-config.log4j
-   clojure.test flatland.useful.utils)
+   clojure.test flatland.useful.utils
+   wiki.html-parser)
   (:require [clojure.string :refer [blank?]]
             [compojure.core :refer [defroutes context GET]]
             [compojure.route :as route]
@@ -104,7 +105,9 @@
 (defn get-title []
   (get-local-state :title))
 
-(defn process-wiki [source mainflg])
+;; 引数で渡したWikiフォーマットの文字列をHTMLに変換して返します。
+(defn process-wiki [source]
+  (wiki.html-parser/parse source))
 
 (defn ok [body]
   {:status 200
