@@ -6,6 +6,7 @@
    clojure.tools.logging
    clj-logging-config.log4j
    clojure.test flatland.useful.utils
+   markdown.core
    wiki.html-parser)
   (:require [clojure.string :refer [blank?]]
             [compojure.core :refer [defroutes context GET]]
@@ -106,8 +107,16 @@
   (get-local-state :title))
 
 ;; 引数で渡したWikiフォーマットの文字列をHTMLに変換して返します。
+;; TODO: とりあえず今はMaekdownのみ対応
 (defn process-wiki [source]
-  (wiki.html-parser/parse source))
+  (md-to-html-string source))
+
+;; ページのソースを取得します。
+;; 第三引数にフォーマット名を渡した場合のみ、フォーマットプラグインによる
+;; ソースの変換を行います。それ以外の場合は必要に応じてプラグイン側で
+;; Wiki::convert_from_fswikiメソッドを呼んで変換を行います。
+(defn get-page [page]
+  "<p>To install MongoDB</p>")
 
 (defn ok [body]
   {:status 200

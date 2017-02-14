@@ -1,6 +1,6 @@
-# wiki
+# Urbanwiki (Dev) [![Build Status](https://travis-ci.org/Hiroyuki-Nagata/urbanwiki.svg?branch=master)](https://travis-ci.org/Hiroyuki-Nagata/urbanwiki)
 
-A play-ground in order to create fswiki clone
+A flexible wiki engine like fswiki
 
 ## Usage
 

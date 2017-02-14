@@ -15,6 +15,4 @@
 
     ;; (. wiki set-title)
     ;; (. wiki do-hook "show")
-    ;; (. wiki process-wiki))
-
-    pagename))
+    (wiki/process-wiki (wiki/get-page pagename))))

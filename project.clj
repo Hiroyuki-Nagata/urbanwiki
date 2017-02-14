@@ -12,6 +12,7 @@
                  [environ/environ "1.0.3"]
                  [hickory/hickory "0.7.0"]
                  [levand/immuconf "0.1.0"]
+                 [markdown-clj/markdown-clj "0.9.94"]
                  [org.flatland/useful "0.11.5"]
                  [org.clojure/clojure "1.8.0"]
                  [prone/prone "0.8.2"]
