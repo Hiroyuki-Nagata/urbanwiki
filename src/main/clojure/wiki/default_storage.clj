@@ -11,25 +11,24 @@
 
 ;; Monger! return MongoDB's connection
 (defn mongodb []
-  (let [db   "urbanwiki"
-        user (or (System/getenv "DATABASE_USER") "")
-        pass (or (System/getenv "DATABASE_PASS") "")
-        host (or (System/getenv "DATABASE_HOST") "127.0.0.1")
-        port (Integer/parseInt (or (System/getenv "DATABASE_PORT") "27017"))]
+  (let [db   (or (System/getenv "DB_NAME") "urbanwiki")
+        user (or (System/getenv "DB_USER") "")
+        pass (or (System/getenv "DB_PASS") "")
+        host (or (System/getenv "DB_HOST") "127.0.0.1")
+        port (Integer/parseInt (or (System/getenv "DB_PORT") "27017"))]
 
     (if (or (str/blank? user) (str/blank? pass))
       ;; ユーザーやパスワードが設定されてないので開発環境
-      (mg/connect (mg/server-address host port))
+      (mg/connect {:host host :port port})
       ;; 本番環境
-      (mg/connect-with-credentials (mg/server-address host port) (mcred/create user db pass)))
-    ))
+      (mg/connect-with-credentials (str host ":" port) (mcred/create user db pass))
+    )))
 
 (defn mongoenv-defined? []
   (not-every? nil?
-              [(System/getenv "DATABASE_USER")
-               (System/getenv "DATABASE_PASS")
-               (System/getenv "DATABASE_HOST")
-               (System/getenv "DATABASE_PORT")]))
+              [(System/getenv "DB_NAME")
+               (System/getenv "DB_USER")
+               (System/getenv "DB_PASS")]))
 
 (defn mongodb-connected? []
   (not (nil? (mongodb))))
