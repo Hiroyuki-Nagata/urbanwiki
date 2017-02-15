@@ -24,6 +24,16 @@
       (mg/connect-with-credentials (mg/server-address host port) (mg/mongo-options) (mcred/create user db pass)))
     ))
 
+(defn mongoenv-defined? []
+  (not-every? nil?
+              [(System/getenv "DATABASE_USER")
+               (System/getenv "DATABASE_PASS")
+               (System/getenv "DATABASE_HOST")
+               (System/getenv "DATABASE_PORT")]))
+
+(defn mongodb-connected? []
+  (not nil? (mongodb)))
+
 ;;
 ;; Singleton pattern
 ;; http://mishadoff.com/blog/clojure-design-patterns/#singleton
