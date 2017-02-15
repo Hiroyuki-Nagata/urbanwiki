@@ -3,7 +3,7 @@ lein: lein2
 before_script:
 script: lein2 do pom, check, uberjar
 jdk:
-  - openjdk8
+  - openjdk7
 branches:
   only:
     - master
