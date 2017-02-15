@@ -15,13 +15,13 @@
         user (or (System/getenv "DATABASE_USER") "")
         pass (or (System/getenv "DATABASE_PASS") "")
         host (or (System/getenv "DATABASE_HOST") "127.0.0.1")
-        port (or (System/getenv "DATABASE_PORT") "27017")]
+        port (or (System/getenv "DATABASE_PORT") 27017)]
 
     (if (or (str/blank? user) (str/blank? pass))
       ;; ユーザーやパスワードが設定されてないので開発環境
-      (mg/connect (mg/server-address host port) (mg/mongo-options))
+      (mg/connect (mg/server-address host port))
       ;; 本番環境
-      (mg/connect-with-credentials (mg/server-address host port) (mg/mongo-options) (mcred/create user db pass)))
+      (mg/connect-with-credentials (mg/server-address host port) (mcred/create user db pass)))
     ))
 
 (defn mongoenv-defined? []
@@ -32,7 +32,7 @@
                (System/getenv "DATABASE_PORT")]))
 
 (defn mongodb-connected? []
-  (not nil? (mongodb)))
+  (not (nil? (mongodb))))
 
 ;;
 ;; Singleton pattern
