@@ -4,7 +4,25 @@
   (:use
    clojure.tools.logging
    clj-logging-config.log4j)
-  (:require [immuconf.config :as cfg]))
+  (:require [clojure.string :as str]
+            [monger.core :as mg]
+            [monger.credentials :as mcred]
+            [immuconf.config :as cfg]))
+
+;; Monger! return MongoDB's connection
+(defn mongodb []
+  (let [db   "urbanwiki"
+        user (or (System/getenv "DATABASE_USER") "")
+        pass (or (System/getenv "DATABASE_PASS") "")
+        host (or (System/getenv "DATABASE_HOST") "127.0.0.1")
+        port (or (System/getenv "DATABASE_PORT") "27017")]
+
+    (if (or (str/blank? user) (str/blank? pass))
+      ;; ユーザーやパスワードが設定されてないので開発環境
+      (mg/connect (mg/server-address host port) (mg/mongo-options))
+      ;; 本番環境
+      (mg/connect-with-credentials (mg/server-address host port) (mg/mongo-options) (mcred/create user db pass)))
+    ))
 
 ;;
 ;; Singleton pattern
