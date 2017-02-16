@@ -9,7 +9,7 @@
    markdown.core
    wiki.html-parser)
   (:require [clojure.string :refer [blank?]]
-            [compojure.core :refer [defroutes context GET]]
+            [compojure.core :refer [defroutes context GET POST]]
             [compojure.route :as route]
             [ring.util.codec :refer [form-encode form-decode]]
             [wiki.default-storage :as db]
@@ -149,18 +149,29 @@
     (->> (default/common req wiki-header contents))))
 
 (defn wiki-index [req]
-  ;; 事前にこのスレッドにおけるクエリをparamsに格納
+  ;; GETの場合, 事前にこのスレッドにおけるクエリをparamsに格納
   (when (not (blank? (:query-string req)))
     (let [ps (keywordize-keys (form-decode (:query-string req)))]
-      (debug (str "params: " ps))
+      (debug (str "query-params: " ps))
       (update-local-state :params ps)))
+  (-> (wiki-index-view req)
+      ok
+      html))
+
+(defn wiki-action [req]
+  ;; POSTの場合
+  (let [body (slurp (:body req) :encoding "utf-8")
+        ps (keywordize-keys (form-decode body "utf-8"))]
+    (debug (str "form-params: " ps))
+    (update-local-state :params ps))
   (-> (wiki-index-view req)
       ok
       html))
 
 ;; compojureを使うルーティング実装
 (defroutes wiki-routes
-  (GET "/" req wiki-index)
-  (GET "/wiki.cgi" req wiki-index)
+  (GET  "/" req wiki-index)
+  (GET  "/wiki.cgi" req wiki-index)
+  (POST "/wiki.cgi" req wiki-action)
   (route/resources "/")
   (route/not-found "<h1>404 page not found</h1>"))
