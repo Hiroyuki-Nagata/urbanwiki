@@ -5,12 +5,13 @@
    clojure.tools.logging
    clj-logging-config.log4j)
   (:require [clojure.string :as str]
+            [monger.collection :as mc]
             [monger.core :as mg]
             [monger.credentials :as mcred]
             [immuconf.config :as cfg]))
 
 ;; Monger! return MongoDB's connection
-(defn mongodb []
+(defn mongodb-conn []
   (let [db   (or (System/getenv "DB_NAME") "urbanwiki")
         user (or (System/getenv "DB_USER") "")
         pass (or (System/getenv "DB_PASS") "")
@@ -24,14 +25,17 @@
       (mg/connect-with-credentials (str host ":" port) (mcred/create user db pass))
     )))
 
-(defn mongoenv-defined? []
-  (not-every? nil?
-              [(System/getenv "DB_NAME")
-               (System/getenv "DB_USER")
-               (System/getenv "DB_PASS")]))
-
 (defn mongodb-connected? []
-  (not (nil? (mongodb))))
+  (not (nil? (mongodb-conn))))
+
+(defn get-page [page]
+  (mc/find "pages" {:page_name page}))
+
+(defn save-page [page content]
+  (let [conn (mongodb-conn)
+        db   (mg/get-db conn (or (System/getenv "DB_NAME") "urbanwiki"))
+        coll "pages"]
+    (mc/insert db coll {:page_name page :content content})))
 
 ;;
 ;; Singleton pattern

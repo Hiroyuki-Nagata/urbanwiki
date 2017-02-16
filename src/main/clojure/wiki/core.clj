@@ -54,11 +54,9 @@
   ;; コンフィグを初期化
   (db/init-config)
   ;; MongoDB接続確認
-  (if (db/mongoenv-defined?)
-    (if (db/mongodb-connected?)
-      (info "Urbanwiki successfully connected with MongoDB!")
-      (warn "Urbanwiki failed to connect MongoDB..."))
-    (info "You need to define MongoDB environment variables..."))
+  (if (db/mongodb-connected?)
+    (info "Urbanwiki successfully connected with MongoDB!")
+    (warn "Urbanwiki failed to connect MongoDB..."))
   ;; プラグインパッケージからinstall関数をテストで呼び出し
   (wiki.plugin.core.install/install @wiki-instance)
 
