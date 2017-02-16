@@ -133,21 +133,20 @@
 
 (defn wiki-index-view [req]
   (set-logger!)
-  ;; パラメーターをチェック(Rubyみたいに)
-  ;; actionがあればプラグインに対してcall-handlerして内容を受け取る
-  (when (not (= 0 count (params)))
-    (let [action (:action (params))
-          contents (call-handler action)]
-      (debug (str "action: " action))
-      (debug (str "contents: " contents))))
 
   ;; プラグインを初期化
   ;; あまりadd-hookでinitializeを登録するプラグインがなさそう
   (do-hook "initialize")
   ;; メニューを取得
-  (let [menus (db/load-config :menu) wiki-header (header/header-tmpl menus)]
+  (let [menus (db/load-config :menu)
+        wiki-header (header/header-tmpl menus)
+        action (:action (params))
+        contents (call-handler action)]
     (debug (str "Get menu items: " (count menus)))
-    (->> (default/common req wiki-header))))
+    (debug (str "Action        : " action))
+    (debug (str "Contents      : " contents))
+
+    (->> (default/common req wiki-header contents))))
 
 (defn wiki-index [req]
   ;; 事前にこのスレッドにおけるクエリをparamsに格納

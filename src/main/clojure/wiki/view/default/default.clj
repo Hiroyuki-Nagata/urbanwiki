@@ -26,7 +26,7 @@
       [:div.comment]]]
     [:div.sidebar]]))
 
-(defn common [req wiki-header]
+(defn common [req wiki-header content]
   (html5
    (default-header "FreeStyleWiki - wiki")
    [:body
@@ -35,6 +35,6 @@
      [:div.header wiki-header]
      [:div.day
       [:div.body
-       [:div.section]]
+       [:div.section content]]
       [:div.comment]]]
     [:div.sidebar]]))
