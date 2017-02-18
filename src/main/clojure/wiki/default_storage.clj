@@ -9,7 +9,7 @@
             [monger.core :as mg]
             [monger.credentials :as mcred]
             [monger.operators :refer [$set]]
-            [monger.conversion :refer [from-db-object]]
+            [monger.query :refer [with-collection fields]]
             [immuconf.config :as cfg]))
 
 ;; Monger! return MongoDB's connection
@@ -35,7 +35,13 @@
         db   (mg/get-db conn (or (System/getenv "DB_NAME") "urbanwiki"))
         coll "pages"
         contents (mc/find-maps db coll {:page_name page})]
-    (debug contents)
+    contents))
+
+(defn get-page-list []
+  (let [conn (mongodb-conn)
+        db   (mg/get-db conn (or (System/getenv "DB_NAME") "urbanwiki"))
+        coll "pages"
+        contents (mc/find-maps db coll {})]
     contents))
 
 (defn save-page [page content]

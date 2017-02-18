@@ -7,4 +7,9 @@
             [wiki.wiki :as wiki]))
 
 (defn do-action [wiki]
-  "List page !")
+  (wiki/set-title "ページの一覧")
+  (let [list (db/get-page-list)]
+    [:ul
+     (for [li list]
+       [:li
+        [:a {:href (wiki/create-page-url (:page_name li))} (:page_name li)]])]))
