@@ -8,6 +8,7 @@
             [monger.collection :as mc]
             [monger.core :as mg]
             [monger.credentials :as mcred]
+            [monger.operators :refer [$set]]
             [immuconf.config :as cfg]))
 
 ;; Monger! return MongoDB's connection
@@ -35,7 +36,8 @@
   (let [conn (mongodb-conn)
         db   (mg/get-db conn (or (System/getenv "DB_NAME") "urbanwiki"))
         coll "pages"]
-    (mc/insert db coll {:page_name page :content content})))
+    ;; ページ名をキーにしてUPSERTを行う
+    (mc/update db coll {:page_name page} {$set {:content content}} {:upsert true})))
 
 ;;
 ;; Singleton pattern
