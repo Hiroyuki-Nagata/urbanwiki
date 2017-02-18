@@ -116,7 +116,9 @@
 ;; ソースの変換を行います。それ以外の場合は必要に応じてプラグイン側で
 ;; Wiki::convert_from_fswikiメソッドを呼んで変換を行います。
 (defn get-page [page]
-  "<p>To install MongoDB</p>")
+  (let [content (db/get-page page)]
+    (debug (:content (first content)))
+    (:content (first content))))
 
 (defn ok [body]
   {:status 200
@@ -133,19 +135,19 @@
 
 (defn wiki-index-view [req]
   (set-logger!)
-
   ;; プラグインを初期化
-  ;; あまりadd-hookでinitializeを登録するプラグインがなさそう
   (do-hook "initialize")
   ;; メニューを取得
   (let [menus (db/load-config :menu)
         wiki-header (header/header-tmpl menus)
         action (:action (params))
-        contents (call-handler action)]
+        page (:page (params))
+        contents (if (blank? action)
+                   (get-page page)
+                   (call-handler action))]
     (debug (str "Get menu items: " (count menus)))
     (debug (str "Action        : " action))
     (debug (str "Contents      : " contents))
-
     (->> (default/common req wiki-header contents))))
 
 (defn wiki-index [req]
