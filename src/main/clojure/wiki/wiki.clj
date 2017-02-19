@@ -140,11 +140,9 @@
   ;; メニューを取得
   (let [menus (db/load-config :menu)
         wiki-header (header/header-tmpl menus)
-        action (:action (params))
+        action (or (:action (params)) "SHOW")
         page (:page (params))
-        contents (if (blank? action)
-                   (get-page page)
-                   (call-handler action))]
+        contents (call-handler action)]
     (debug (str "Get menu items: " (count menus)))
     (debug (str "Action        : " action))
     (debug (str "Contents      : " contents))

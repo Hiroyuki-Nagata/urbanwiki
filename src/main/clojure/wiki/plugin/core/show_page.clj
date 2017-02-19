@@ -8,11 +8,5 @@
             [wiki.wiki :as wiki]))
 
 (defn do-action [wiki]
-
-  (let [pagename (if (blank? (get-in wiki [:params :page]))
-                   (db/load-config :frontpage)
-                   (get-in wiki [:params :page]))]
-
-    ;; (. wiki set-title)
-    ;; (. wiki do-hook "show")
-    (wiki/process-wiki (wiki/get-page pagename))))
+  (let [page-name (:page (wiki/params))]
+    (wiki/process-wiki (wiki/get-page page-name))))

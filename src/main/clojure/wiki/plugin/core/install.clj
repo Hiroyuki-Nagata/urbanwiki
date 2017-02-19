@@ -19,7 +19,7 @@
   (wiki/add-menu "一覧"   (wiki/create-url {:action "LIST"})                 995 nil)
   (wiki/add-menu "ヘルプ" (wiki/create-page-url "Help")                      100 nil)
 
-  (wiki/add-handler ""     "wiki.plugin.core.show-page")
+  (wiki/add-handler "SHOW" "wiki.plugin.core.show-page")
   (wiki/add-handler "NEW"  "wiki.plugin.core.new-page" )
   (wiki/add-handler "LIST" "wiki.plugin.core.list-page")
   (wiki/add-handler "EDIT" "wiki.plugin.core.edit-page")
