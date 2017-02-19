@@ -18,4 +18,4 @@
     (let [page-name (:page (wiki/params))
           content (:content (wiki/params))]
       (db/save-page page-name content)
-      content)))
+      (wiki/call-handler "SHOW"))))
