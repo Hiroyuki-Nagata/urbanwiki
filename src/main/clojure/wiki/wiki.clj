@@ -44,14 +44,15 @@
 ;; 引数にはフックの名前に加えて任意のパラメータを渡すことができます。
 ;; これらのパラメータは呼び出されるクラスのhookメソッドの引数として渡されます。
 (defn do-hook [name]
-  (for [class (:name (db/load-config :hook))]
-    (let [s (str class "/hook")
+  (debug (str "Callback name: " name))
+  (doseq [class (db/load-config :hook)]
+    (let [n (:obj class)
+          s (str n "/hook")
           k (keyword s)
           ns-sym (symbol (namespace k))
-          nm-sym (symbol (name k))]
-      (debug (str "Calling namespace & func: " s))
+          nm-sym (symbol "hook")]
       (require ns-sym)
-      ((ns-resolve ns-sym nm-sym) nil))))
+      ((ns-resolve ns-sym nm-sym)))))
 
 ;; アクションハンドラプラグインを追加します。
 ;; リクエスト時にactionというパラメータが一致するアクションが呼び出されます。
@@ -143,7 +144,7 @@
         action (or (:action (params)) "SHOW")
         page (:page (params))
         contents (call-handler action)]
-    (debug (str "Get menu items: " (count menus)))
+    (debug (str "Get menu items: " menus))
     (debug (str "Action        : " action))
     (debug (str "Contents      : " contents))
     (->> (default/common req wiki-header contents))))

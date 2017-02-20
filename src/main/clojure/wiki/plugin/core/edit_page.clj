@@ -19,3 +19,6 @@
           content (:content (wiki/params))]
       (db/save-page page-name content)
       (wiki/call-handler "SHOW"))))
+
+(defn hook []
+  (debug "Hello, Hook !!!???"))

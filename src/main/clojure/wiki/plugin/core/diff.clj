@@ -8,3 +8,6 @@
 
 (defn do-action [wiki]
   "Diff !")
+
+(defn hook []
+  (debug "Hello, Hook !!!???"))
