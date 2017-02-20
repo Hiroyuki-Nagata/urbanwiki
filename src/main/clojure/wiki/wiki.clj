@@ -33,6 +33,11 @@
 (defn update-each-state [m]
   (doseq [[k v] m] (update-local-state k v)))
 
+(defn has-value [key value]
+  "Returns a predicate that tests whether a map contains a specific value"
+  (fn [m]
+    (= value (m key))))
+
 (defn params []
   (:params @@wiki-local-state))
 
@@ -80,7 +85,13 @@
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
 (defn create-url
   ([] (db/load-config :script_name))
-  ([m] (str (db/load-config :script_name) "?" (form-encode m))))
+  ([m]
+   (let [script-name (db/load-config :script_name)]
+     (if (some? m)
+       ;; wiki.cgi?action=xxx ==> valueの値にnilがあったら消してる
+       (str script-name "?" (form-encode (into {} (filter (comp some? val) m))))
+       ;; wiki.cgi
+       script-name))))
 
 ;; ページにジャンプするためのURLを生成するユーティリティメソッドです。
 ;; 引数としてページ名を渡します。
@@ -92,9 +103,16 @@
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 (defn add-menu [name href weight nofollow]
   (set-logger!)
-  (db/append-config
-   {:menu
-    {:name name, :href href, :weight weight, :nofollow nofollow }})
+  (if (empty? (filter (has-value :name name) (db/load-config :menu)))
+    ;; キーがなければそのまま追加
+    (db/append-config
+     {:menu
+      {:name name, :href href, :weight weight, :nofollow nofollow }})
+    ;; あればキーで更新する
+    (db/save-config
+     {:menu
+      (merge (remove (has-value :name name) (db/load-config :menu))
+             {:name name, :href href, :weight weight, :nofollow nofollow })}))
   (info (str "add-menu: name: " name ", href: " href ", weight: " weight ", nofollow: " nofollow)))
 
 ;; アクションハンドラ中でタイトルを設定する場合に使用します。

@@ -107,9 +107,6 @@
     (let [curvec (get-state k)
           conjed (conj curvec v)
           parent (hash-map k conjed)]
-      (debug (str "current: " curvec))
-      (debug (str "append : " v))
-      (debug (str "after  : " parent))
       (update-each-state parent))))
 
 ;; コンフィグの初期値を読み出す

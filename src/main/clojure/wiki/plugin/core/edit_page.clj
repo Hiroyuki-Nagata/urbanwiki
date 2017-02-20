@@ -21,4 +21,4 @@
       (wiki/call-handler "SHOW"))))
 
 (defn hook []
-  (debug "Hello, Hook !!!???"))
+  (wiki/add-menu "編集" (wiki/create-url {:action "EDIT" :page (:page (wiki/params))}) 997 1))
