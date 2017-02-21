@@ -1,7 +1,5 @@
 (ns wiki.plugin.core.handler-test
-  (:use
-   clojure.tools.logging
-   clj-logging-config.log4j)
+  (:use clojure.tools.logging)
   (:require [clojure.test :refer :all]))
 
 ;;
@@ -17,5 +15,4 @@
 
 ;; wikiのインスタンスに対してなんらかの変更を行う
 (defn hook [wiki]
-  (set-logger!)
-  (info "Called hook function..."))
+  (logging/info "Called hook function..."))

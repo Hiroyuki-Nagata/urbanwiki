@@ -5,16 +5,20 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :uberjar-name "wiki-clj.jar"
   :min-lein-version "2.5.3"
-  :dependencies [[clj-http/clj-http "2.3.0"]
-                 [clj-logging-config/clj-logging-config "1.9.12"]
+  :dependencies [
+                 ;;[ch.qos.logback/logback-classic "1.0.13"]
+                 [clj-http/clj-http "2.3.0"]
+                 ;;[clj-logging-config/clj-logging-config "1.9.12"]
+                 [com.novemberain/monger "3.1.0"]
                  [compojure/compojure "1.4.0"]
                  [environ/environ "1.0.3"]
                  [hickory/hickory "0.7.0"]
                  [levand/immuconf "0.1.0"]
                  [markdown-clj/markdown-clj "0.9.94"]
-                 [com.novemberain/monger "3.1.0"]
-                 [org.flatland/useful "0.11.5"]
                  [org.clojure/clojure "1.8.0"]
+                 [org.clojure/tools.logging "0.3.1"]
+                 [org.flatland/useful "0.11.5"]
+                 ;;[org.slf4j/slf4j-api "1.7.0"]
                  [prone/prone "0.8.2"]
                  [ring/ring "1.4.0"]]
   :source-paths ["src/main/clojure"]

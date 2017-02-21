@@ -3,14 +3,11 @@
 ;;
 (ns wiki.plugin.core.install
   (:gen-class install true)
-  (:use
-   clojure.tools.logging
-   clj-logging-config.log4j)
+  (:use clojure.tools.logging)
   (:require [wiki.default-storage :as db]
             [wiki.wiki :as wiki]))
 
 (defn install [wiki]
-  (set-logger!)
   (info "Install core plugin...")
   ;; トップページ
   (wiki/add-menu "トップ" (wiki/create-page-url (db/load-config :frontpage)) 999 nil)

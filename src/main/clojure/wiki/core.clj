@@ -1,8 +1,6 @@
 (ns wiki.core
   (:gen-class main true)
-  (:use
-   clojure.tools.logging
-   clj-logging-config.log4j)
+  (:use clojure.tools.logging)
   (:require [environ.core :refer [env]]
             [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
@@ -48,7 +46,7 @@
 (defonce wiki-instance (atom nil))
 
 (defn -main [& {:as args}]
-  (set-logger!)
+  (println "Hello ?")
   (info "Just a plain logging message, you should see the level at the beginning")
 
   ;; コンフィグを初期化

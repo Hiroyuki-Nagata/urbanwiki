@@ -2,7 +2,6 @@
   (:gen-class true)
   (:use
    clojure.tools.logging
-   clj-logging-config.log4j
    wiki.view.editform)
   (:require [clojure.string :as str]
             [wiki.default-storage :as db]
@@ -21,4 +20,5 @@
       (wiki/call-handler "SHOW"))))
 
 (defn hook []
+  (debug "Hook coming !!!")
   (wiki/add-menu "編集" (wiki/create-url {:action "EDIT" :page (:page (wiki/params))}) 997 1))

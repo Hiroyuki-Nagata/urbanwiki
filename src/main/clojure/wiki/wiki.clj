@@ -4,8 +4,7 @@
   (:use
    clojure.walk
    clojure.tools.logging
-   clj-logging-config.log4j
-   clojure.test flatland.useful.utils
+   flatland.useful.utils
    markdown.core
    wiki.html-parser)
   (:require [clojure.string :refer [blank?]]
@@ -102,7 +101,6 @@
 ;; 優先度が高いほど左側に表示されます。
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 (defn add-menu [name href weight nofollow]
-  (set-logger!)
   (if (empty? (filter (has-value :name name) (db/load-config :menu)))
     ;; キーがなければそのまま追加
     (db/append-config
@@ -111,8 +109,8 @@
     ;; あればキーで更新する
     (db/save-config
      {:menu
-      (merge (remove (has-value :name name) (db/load-config :menu))
-             {:name name, :href href, :weight weight, :nofollow nofollow })}))
+      (into [] (merge (remove (has-value :name name) (db/load-config :menu))
+                      {:name name, :href href, :weight weight, :nofollow nofollow }))}))
   (info (str "add-menu: name: " name ", href: " href ", weight: " weight ", nofollow: " nofollow)))
 
 ;; アクションハンドラ中でタイトルを設定する場合に使用します。
@@ -153,15 +151,16 @@
    :body "<h1>404 page not found</1>"})
 
 (defn wiki-index-view [req]
-  (set-logger!)
   ;; プラグインを初期化
   (do-hook "initialize")
   ;; メニューを取得
-  (let [menus (db/load-config :menu)
-        wiki-header (header/header-tmpl menus)
-        action (or (:action (params)) "SHOW")
+  (let [action (or (:action (params)) "SHOW")
         page (:page (params))
+        menus (db/load-config :menu)
+        wiki-header (header/header-tmpl menus)
         contents (call-handler action)]
+
+    (debug (db/load-config))
     (debug (str "Get menu items: " menus))
     (debug (str "Action        : " action))
     (debug (str "Contents      : " contents))
