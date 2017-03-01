@@ -1,10 +1,13 @@
 (ns wiki.wiki
   (:gen-class
    :main false)
+  (:import
+   (java.util UUID))
   (:use
    clojure.walk
    clojure.tools.logging
    clojure.test flatland.useful.utils
+   ring.middleware.session
    markdown.core
    wiki.html-parser)
   (:require [clojure.string :refer [blank?]]
@@ -18,6 +21,9 @@
 ;; スレッドごとのwiki情報を管理する
 (defonce wiki-initial-state {:title "" :edit 0 :params {}})
 (def wiki-local-state (thread-local (atom wiki-initial-state)))
+
+;; Cookie名
+(defonce wiki-cookie-name "JSESSIONID")
 
 (defn clear-local-state []
   (swap! wiki-local-state (fn [p] wiki-initial-state)))
@@ -137,9 +143,15 @@
     (debug (:content (first content)))
     (:content (first content))))
 
-(defn ok [body]
-  {:status 200
-   :body body})
+;; Cookieが発行済ならばtrue、そうでないならfalse
+(defn seen-before [req]
+  (get-in req [:cookies wiki-cookie-name] :never-before))
+
+(defn ok [body req]
+  (let [s (seen-before req)]
+    (if (= s :never-before)
+      {:status 200 :cookies {wiki-cookie-name {:value (. (UUID/randomUUID) toString) }} :body body }
+      {:status 200 :cookies (req :cookies) :body body })))
 
 (defn html [res]
   (assoc res :headers {"Content-Type" "text/html; charset=utf-8"
@@ -171,7 +183,7 @@
       (debug (str "query-params: " ps))
       (update-local-state :params ps)))
   (-> (wiki-index-view req)
-      ok
+      (ok req)
       html))
 
 (defn wiki-action [req]
@@ -181,7 +193,7 @@
     (debug (str "form-params: " ps))
     (update-local-state :params ps))
   (-> (wiki-index-view req)
-      ok
+      (ok req)
       html))
 
 ;; compojureを使うルーティング実装
