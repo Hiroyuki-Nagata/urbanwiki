@@ -1,8 +1,8 @@
 (ns wiki.core
   (:gen-class main true)
+  (:import (java.util.logging Logger Level))
   (:use
-   clojure.tools.logging
-   clj-logging-config.log4j)
+   clojure.tools.logging)
   (:require [environ.core :refer [env]]
             [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
@@ -48,7 +48,9 @@
 (defonce wiki-instance (atom nil))
 
 (defn -main [& {:as args}]
-  (set-logger!)
+  ;; MongoDBのJUL由来のログを消してる
+  (let [mongoLogger (Logger/getLogger "org.mongodb.driver")]
+    (. mongoLogger setLevel(Level/SEVERE)))
   (info "Just a plain logging message, you should see the level at the beginning")
 
   ;; コンフィグを初期化

@@ -4,7 +4,6 @@
   (:use
    clojure.walk
    clojure.tools.logging
-   clj-logging-config.log4j
    clojure.test flatland.useful.utils
    markdown.core
    wiki.html-parser)
@@ -102,7 +101,6 @@
 ;; 優先度が高いほど左側に表示されます。
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 (defn add-menu [name href weight nofollow]
-  (set-logger!)
   (if (empty? (filter (has-value :name name) (db/load-config :menu)))
     ;; キーがなければそのまま追加
     (db/append-config
@@ -153,7 +151,6 @@
    :body "<h1>404 page not found</1>"})
 
 (defn wiki-index-view [req]
-  (set-logger!)
   ;; プラグインを初期化
   (do-hook "initialize")
   ;; メニューを取得

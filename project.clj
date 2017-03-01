@@ -6,7 +6,11 @@
   :uberjar-name "wiki-clj.jar"
   :min-lein-version "2.5.3"
   :dependencies [[clj-http/clj-http "2.3.0"]
-                 [clj-logging-config/clj-logging-config "1.9.12"]
+                 ;; logging for slf4j & logback
+                 [org.clojure/tools.logging "0.2.6"]
+                 [org.slf4j/slf4j-api "1.7.0"]
+                 [ch.qos.logback/logback-classic "1.0.13"]
+                 ;; end logging library
                  [compojure/compojure "1.4.0"]
                  [environ/environ "1.0.3"]
                  [hickory/hickory "0.7.0"]
