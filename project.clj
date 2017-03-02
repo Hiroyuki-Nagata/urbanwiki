@@ -1,6 +1,6 @@
 (defproject wiki "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "A new Wiki engine like FreeStyleWiki"
+  :url "https://github.com/Hiroyuki-Nagata/urbanwiki"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :uberjar-name "wiki-clj.jar"
@@ -12,8 +12,11 @@
                  [ch.qos.logback/logback-classic "1.0.13"]
                  ;; end logging library
                  [compojure/compojure "1.4.0"]
+                 [sandbar/sandbar-core "0.3.0"]
+                 [sandbar/sandbar-session "0.2.3"]
+                 [sandbar/sandbar-auth "0.2.3"]
                  [environ/environ "1.0.3"]
-                 [hickory/hickory "0.7.0"]
+                 [hiccup/hiccup "1.0.5"]
                  [levand/immuconf "0.1.0"]
                  [markdown-clj/markdown-clj "0.9.94"]
                  [com.novemberain/monger "3.1.0"]
