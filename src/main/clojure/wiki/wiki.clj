@@ -22,9 +22,6 @@
 (defonce wiki-initial-state {:title "" :edit 0 :params {}})
 (def wiki-local-state (thread-local (atom wiki-initial-state)))
 
-;; Cookie名
-(defonce wiki-cookie-name "JSESSIONID")
-
 (defn clear-local-state []
   (swap! wiki-local-state (fn [p] wiki-initial-state)))
 
@@ -143,15 +140,11 @@
     (debug (:content (first content)))
     (:content (first content))))
 
-;; Cookieが発行済ならばtrue、そうでないならfalse
-(defn seen-before [req]
-  (get-in req [:cookies wiki-cookie-name] :never-before))
-
 (defn ok [body req]
-  (let [s (seen-before req)]
-    (if (= s :never-before)
-      {:status 200 :cookies {wiki-cookie-name {:value (. (UUID/randomUUID) toString) }} :body body }
-      {:status 200 :cookies (req :cookies) :body body })))
+  (debug (str "session value: " (:session req) " params: " (:page (params))))
+  {:status 200
+   :session {:page (:page (params))}
+   :body body })
 
 (defn html [res]
   (assoc res :headers {"Content-Type" "text/html; charset=utf-8"

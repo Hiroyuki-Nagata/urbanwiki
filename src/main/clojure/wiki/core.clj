@@ -3,7 +3,7 @@
   (:import (java.util.logging Logger Level))
   (:use
    clojure.tools.logging
-   ring.middleware.cookies)
+   ring.middleware.session)
   (:require [environ.core :refer [env]]
             [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
@@ -18,7 +18,6 @@
 (defonce server (atom nil))
 
 (defn- wrap [handler middleware opt]
-  ;; set cookie anyway
   ;; set middleware
   (if (true? opt)
     (middleware handler)
@@ -28,7 +27,7 @@
 
 (def app
   (-> (routes wiki-routes)
-      (ring.middleware.cookies/wrap-cookies)
+      (ring.middleware.session/wrap-session)
       wrap-dev))
 
 (defn start-server [& {:keys [host port join?]

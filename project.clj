@@ -12,9 +12,6 @@
                  [ch.qos.logback/logback-classic "1.0.13"]
                  ;; end logging library
                  [compojure/compojure "1.4.0"]
-                 [sandbar/sandbar-core "0.3.0"]
-                 [sandbar/sandbar-session "0.2.3"]
-                 [sandbar/sandbar-auth "0.2.3"]
                  [environ/environ "1.0.3"]
                  [hiccup/hiccup "1.0.5"]
                  [levand/immuconf "0.1.0"]
