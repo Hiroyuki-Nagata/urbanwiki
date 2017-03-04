@@ -10,7 +10,10 @@
    [:link {:rel "stylesheet" :type "text/css" :href ""}]
    [:style {:type "text/css"}]
    [:title title]
+   (include-css "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css")
+   (include-js "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js")
    (include-css "/css/default/default.css")
+   [:script "hljs.initHighlightingOnLoad();"]
    ])
 
 (defn top [req & body]
