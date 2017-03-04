@@ -5,7 +5,7 @@
   (:require [wiki.default-storage :as db]
             [wiki.wiki :as wiki]))
 
-(defn do-action [wiki]
+(defn do-action [req]
   (wiki/set-title "ページの一覧")
   (let [list (db/get-page-list)]
     [:ul

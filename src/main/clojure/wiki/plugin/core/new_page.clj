@@ -5,7 +5,7 @@
   (:require [wiki.default-storage :as db]
             [wiki.wiki :as wiki]))
 
-(defn do-action [wiki]
+(defn do-action [req]
   (str "<form method=\"post\" action=\"" (wiki/create-url) "\">\n
     <input type=\"text\" name=\"page\" size=\"40\">
     <input type=\"submit\" value=\" 作成 \">

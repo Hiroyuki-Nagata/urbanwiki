@@ -24,7 +24,7 @@
       (mg/connect {:host host :port port})
       ;; 本番環境
       (mg/connect-with-credentials (str host ":" port) (mcred/create user db pass))
-    )))
+      )))
 
 (defn mongodb-connected? []
   (not (nil? (mongodb-conn))))
@@ -61,6 +61,10 @@
 (def wiki-state (atom {}))
 (defonce wiki-config-rsc "resources/config.edn")
 
+(defn has-value [key value]
+  (fn [m]
+    (= value (m key))))
+
 (defn clear-state []
   (swap! wiki-state (fn [p] {})))
 
@@ -80,24 +84,24 @@
 ;; グローバルなコンフィグ読み出し
 (defn load-config
   ;; 引数なし
-  ([] (let [conf (get-state)]
-        (debug (str "load-config: " conf))
-        conf))
+  ([] (let [conf (get-state)] conf))
   ;; 引数あり
-  ([& args] (let [conf (get-in (get-state) args)]
-              (debug (str "load-config: " conf))
-              conf)))
+  ([& args] (let [conf (get-in (get-state) args)] conf)))
 
 ;; グローバルなコンフィグ書き込み
 (defn save-config [m]
-  (debug (str "save-config: " m))
   (let [updated (merge m (get-state))]
     (doseq [[k v] updated] (update-state k v))))
 
-;; キーで指定されたハッシュマップに新たにコンフィグを追加
-;; 適用できるのはベクタ型のみにしたい
+;; キーで指定されたハッシュマップを更新する
+(defn update-config-with-key [m key val]
+  (doseq [[k v] m]
+    (let [curvec (remove #(= val (key %)) (get-state k))
+          conjed (conj curvec v)
+          parent (hash-map k conjed)]
+      (update-each-state parent))))
+
 (defn append-config [m]
-  (debug (str "append-config: " m))
   (doseq [[k v] m]
     (let [curvec (get-state k)
           conjed (conj curvec v)

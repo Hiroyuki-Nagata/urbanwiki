@@ -7,7 +7,7 @@
             [wiki.default-storage :as db]
             [wiki.wiki :as wiki]))
 
-(defn do-action [wiki]
+(defn do-action [req]
   (if (str/blank? (:save (wiki/params)))
     ;; 編集開始
     (let [page-name (:page (wiki/params))
@@ -19,5 +19,6 @@
       (db/save-page page-name content)
       (wiki/call-handler "SHOW"))))
 
-(defn hook []
+(defn hook [req]
+  (debug (str "cookies: " (:cookies req)))
   (wiki/add-menu "編集" (wiki/create-url {:action "EDIT" :page (:page (wiki/params))}) 997 1))

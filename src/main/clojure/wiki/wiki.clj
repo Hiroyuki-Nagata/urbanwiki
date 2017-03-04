@@ -36,7 +36,6 @@
   (doseq [[k v] m] (update-local-state k v)))
 
 (defn has-value [key value]
-  "Returns a predicate that tests whether a map contains a specific value"
   (fn [m]
     (= value (m key))))
 
@@ -50,7 +49,7 @@
 ;; add_hookメソッドで登録されたフックプラグインを実行します。
 ;; 引数にはフックの名前に加えて任意のパラメータを渡すことができます。
 ;; これらのパラメータは呼び出されるクラスのhookメソッドの引数として渡されます。
-(defn do-hook [name]
+(defn do-hook [name req]
   (debug (str "Callback name: " name))
   (doseq [class (db/load-config :hook)]
     (let [n (:obj class)
@@ -59,7 +58,7 @@
           ns-sym (symbol (namespace k))
           nm-sym (symbol "hook")]
       (require ns-sym)
-      ((ns-resolve ns-sym nm-sym)))))
+      ((ns-resolve ns-sym nm-sym) req))))
 
 ;; アクションハンドラプラグインを追加します。
 ;; リクエスト時にactionというパラメータが一致するアクションが呼び出されます。
@@ -71,7 +70,7 @@
 
 ;; add_handlerメソッドで登録されたアクションハンドラを実行します。
 ;; アクションハンドラのdo_actionメソッドの戻り値を返します。
-(defn call-handler [action]
+(defn call-handler [action req]
   (when (not (blank? (get (db/load-config :handler) action)))
     (let [n (get (db/load-config :handler) action)
           s (str n "/do-action")
@@ -81,7 +80,7 @@
       (debug (str "Calling namespace & func: " s))
       (require ns-sym)
       ;; threadごとのwikiの状態を渡す
-      ((ns-resolve ns-sym nm-sym) @@wiki-local-state))))
+      ((ns-resolve ns-sym nm-sym) req))))
 
 ;; 任意のURLを生成するためのユーティリティメソッドです。
 ;; 引数としてパラメータのハッシュリファレンスを渡します。
@@ -103,18 +102,22 @@
 ;; メニュー項目を追加します。既に同じ名前の項目が登録されている場合は上書きします。
 ;; 優先度が高いほど左側に表示されます。
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
+;; TODO: この機能はセッションを利用しないとすぐに仕組みが崩壊するので後々改修する
 (defn add-menu [name href weight nofollow]
+  (info (str "add-menu to add: " {:name name, :href href, :weight weight, :nofollow nofollow }))
   (if (empty? (filter (has-value :name name) (db/load-config :menu)))
     ;; キーがなければそのまま追加
-    (db/append-config
-     {:menu
-      {:name name, :href href, :weight weight, :nofollow nofollow }})
+    (do
+      (db/append-config
+       {:menu
+        {:name name, :href href, :weight weight, :nofollow nofollow }}))
     ;; あればキーで更新する
-    (db/save-config
-     {:menu
-      (merge (remove (has-value :name name) (db/load-config :menu))
-             {:name name, :href href, :weight weight, :nofollow nofollow })}))
-  (info (str "add-menu: name: " name ", href: " href ", weight: " weight ", nofollow: " nofollow)))
+    (do
+      (db/update-config-with-key
+       {:menu
+        {:name name, :href href, :weight weight, :nofollow nofollow }} :name name)
+    ))
+  (info (str "add-menu: result: " (pr-str (filter (has-value :name name) (db/load-config :menu))))))
 
 ;; アクションハンドラ中でタイトルを設定する場合に使用します。
 ;; 編集系の画面の場合、第二引数に1を指定してください。
@@ -141,7 +144,7 @@
     (:content (first content))))
 
 (defn ok [body req]
-  (debug (str "session value: " (:session req) " params: " (:page (params))))
+  (debug (str "session value: " (:session req) " params: " (:page (params)) " cookies: " (:cookies req)))
   {:status 200
    :session {:page (:page (params))}
    :body body })
@@ -157,13 +160,13 @@
 
 (defn wiki-index-view [req]
   ;; プラグインを初期化
-  (do-hook "initialize")
+  (do-hook "initialize" nil)
   ;; メニューを取得
   (let [menus (db/load-config :menu)
         wiki-header (header/header-tmpl menus)
         action (or (:action (params)) "SHOW")
         page (:page (params))
-        contents (call-handler action)]
+        contents (call-handler action req)]
     (debug (str "Get menu items: " menus))
     (debug (str "Action        : " action))
     (debug (str "Contents      : " contents))
