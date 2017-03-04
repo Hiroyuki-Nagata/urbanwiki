@@ -23,4 +23,8 @@
   (wiki/add-handler "EDIT" "wiki.plugin.core.edit-page")
   (wiki/add-hook    "show" "wiki.plugin.core.edit-page")
   (wiki/add-handler "DIFF" "wiki.plugin.core.diff"     )
-  (wiki/add-hook    "show" "wiki.plugin.core.diff"     ))
+  (wiki/add-hook    "show" "wiki.plugin.core.diff"     )
+
+  (wiki/add-menu "ソース" nil 700 1)
+  (wiki/add-handler "SOURCE" "wiki.plugin.core.source")
+  (wiki/add-hook    "show"   "wiki.plugin.core.source"))
