@@ -11,14 +11,13 @@
   (if (str/blank? (:save (wiki/params)))
     ;; 編集開始
     (let [page-name (:page (wiki/params))
-          content (db/get-page page-name)]
+          content (wiki/get-page page-name)]
       (editform-tmpl content "EDIT" "xxx" page-name))
     ;; 保存してそのページを見せる
     (let [page-name (:page (wiki/params))
           content (:content (wiki/params))]
       (db/save-page page-name content)
-      (wiki/call-handler "SHOW"))))
+      (wiki/call-handler "SHOW" req))))
 
 (defn hook [req]
-  (debug (str "cookies: " (:cookies req)))
   (wiki/add-menu "編集" (wiki/create-url {:action "EDIT" :page (:page (wiki/params))}) 997 1))

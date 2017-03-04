@@ -104,7 +104,6 @@
 ;; add-menu(項目名,URL,優先度,クロールを拒否するかどうか)
 ;; TODO: この機能はセッションを利用しないとすぐに仕組みが崩壊するので後々改修する
 (defn add-menu [name href weight nofollow]
-  (info (str "add-menu to add: " {:name name, :href href, :weight weight, :nofollow nofollow }))
   (if (empty? (filter (has-value :name name) (db/load-config :menu)))
     ;; キーがなければそのまま追加
     (do
