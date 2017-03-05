@@ -32,5 +32,5 @@
   ;; wiki.plugin.core.handler-test
   ;; 登録されたhandlerに対して呼び出しを行う
   (testing "We should call handler with call-handler"
-    (let [response (call-handler "TEST")]
+    (let [response (call-handler "TEST" nil)]
       (is (= "Hello, Hook system !" response)))))

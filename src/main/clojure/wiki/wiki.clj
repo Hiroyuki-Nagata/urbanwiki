@@ -60,13 +60,22 @@
       (require ns-sym)
       ((ns-resolve ns-sym nm-sym) req))))
 
+(defn add-handler-base [action class type]
+  (let [new-handler (merge {action class} (db/load-config :handler))
+        new-handler-permission (merge {action type} (db/load-config :handler_permission))]
+    (db/update-each-state {:handler new-handler})
+    (db/update-each-state {:handler_permission new-handler-permission})))
+
 ;; アクションハンドラプラグインを追加します。
 ;; リクエスト時にactionというパラメータが一致するアクションが呼び出されます。
 (defn add-handler [action class]
-  (let [new-handler (merge {action class} (db/load-config :handler))
-        new-handler-permission (merge {action 1} (db/load-config :handler_permission))]
-    (db/update-each-state {:handler new-handler})
-    (db/update-each-state {:handler_permission new-handler-permission})))
+  (add-handler-base action class 1))
+
+;; 管理者用のアクションハンドラを追加します。
+;; このメソッドによって追加されたアクションハンドラは管理者としてログインしている場合のみ実行可能です。
+;; それ以外の場合はエラーメッセージを表示します。
+(defn add-admin-handler [action class]
+  (add-handler-base action class 0))
 
 ;; add_handlerメソッドで登録されたアクションハンドラを実行します。
 ;; アクションハンドラのdo_actionメソッドの戻り値を返します。
@@ -106,17 +115,29 @@
 (defn add-menu [name href weight nofollow]
   (if (empty? (filter (has-value :name name) (db/load-config :menu)))
     ;; キーがなければそのまま追加
-    (do
-      (db/append-config
-       {:menu
-        {:name name, :href href, :weight weight, :nofollow nofollow }}))
+    (db/append-config
+     {:menu
+      {:name name :href href :weight weight :nofollow nofollow }})
     ;; あればキーで更新する
-    (do
-      (db/update-config-with-key
-       {:menu
-        {:name name, :href href, :weight weight, :nofollow nofollow }} :name name)
-    ))
+    (db/update-config-with-key
+     {:menu
+      {:name name :href href :weight weight :nofollow nofollow }} :name name))
   (info (str "add-menu: result: " (pr-str (filter (has-value :name name) (db/load-config :menu))))))
+
+;; 管理者用のメニューを追加します。管理者ユーザがログインした場合に表示されます。
+;; 優先度が高いほど上のほうに表示されます。
+;; TODO: この機能はセッションを利用しないとすぐに仕組みが崩壊するので後々改修する
+(defn add-admin-menu [label url weight desc]
+  (if (empty? (filter (has-value :label label) (db/load-config :admin_menu)))
+    ;; キーがなければそのまま追加
+    (db/append-config
+     {:admin_menu
+      {:label label :url url :weight weight :desc desc :type 0 }})
+    ;; あればキーで更新する
+    (db/update-config-with-key
+     {:admin_menu
+      {:label label :url url :weight weight :desc desc :type 0 }} :label label))
+  (info (str "add-admin-menu: result: " (pr-str (filter (has-value :label label) (db/load-config :admin_menu))))))
 
 ;; アクションハンドラ中でタイトルを設定する場合に使用します。
 ;; 編集系の画面の場合、第二引数に1を指定してください。
