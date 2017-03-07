@@ -14,4 +14,11 @@
 
 (defn do-action [req]
   (debug "Called login/do-action")
-  (default req))
+  (let [params (wiki/params)
+        id (or (:id params) "")
+        pass (or (:pass params) "")]
+    (if (wiki/login id pass)
+      ;; ログイン成功
+      "Succeed to login !"
+      ;; ログインしていないのでログインフォームへ
+      (default req))))

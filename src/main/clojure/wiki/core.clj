@@ -1,16 +1,16 @@
 (ns wiki.core
   (:gen-class main true)
   (:import (java.util.logging Logger Level))
-  (:use
-   clojure.tools.logging
-   ring.middleware.session)
+  (:use [clojure.tools.logging]
+        [ring.middleware.session]
+        [wiki.wiki :refer [wiki-routes]])
   (:require [environ.core :refer [env]]
             [compojure.core :refer [routes]]
             [ring.adapter.jetty :as server]
             [ring.util.response :as res]
             [ring.middleware.resource :refer [wrap-resource]]
             [wiki.middleware :refer [wrap-dev]]
-            [wiki.wiki :refer [wiki-routes]]
+            ;;[wiki.wiki :refer [wiki-routes]]
             [wiki.default-storage :as db]
             [wiki.plugin.core.install]
             [wiki.plugin.admin.install]))
@@ -56,6 +56,10 @@
 
   ;; コンフィグを初期化
   (db/init-config)
+  ;; 初期ユーザーを登録
+  (wiki.wiki/add-user "admin" "admin" :admin)
+  (wiki.wiki/add-user "user" "user" :user)
+
   ;; MongoDB接続確認
   (if (db/mongodb-connected?)
     (info "Urbanwiki successfully connected with MongoDB!")
