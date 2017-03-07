@@ -1,12 +1,10 @@
 (ns wiki.wiki
   (:gen-class
    :main false)
-  (:import
-   (java.util UUID))
   (:use
    clojure.walk
    clojure.tools.logging
-   clojure.test flatland.useful.utils
+   flatland.useful.utils
    ring.middleware.session
    markdown.core
    wiki.html-parser)

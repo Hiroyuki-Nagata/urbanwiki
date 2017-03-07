@@ -8,7 +8,7 @@
   (:require [wiki.default-storage :as db]
             [wiki.wiki :as wiki]))
 
-(defn install [wiki]
+(defn install []
   (info "Install core plugin...")
   ;; トップページ
   (wiki/add-menu "トップ" (wiki/create-page-url (db/load-config :frontpage)) 999 nil)

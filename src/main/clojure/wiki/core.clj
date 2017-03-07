@@ -12,7 +12,6 @@
             [wiki.plugin.core.install]
             [wiki.middleware :refer [wrap-dev]]
             [wiki.wiki :refer [wiki-routes]]
-            [wiki.wiki :as wiki-instance]
             [wiki.default-storage :as db]))
 
 (defonce server (atom nil))
@@ -61,7 +60,7 @@
     (info "Urbanwiki successfully connected with MongoDB!")
     (warn "Urbanwiki failed to connect MongoDB..."))
   ;; プラグインパッケージからinstall関数をテストで呼び出し
-  (wiki.plugin.core.install/install @wiki-instance)
+  (wiki.plugin.core.install/install)
 
   (start-server
    :host (get args "host") :port (get args "port") :join? true))
