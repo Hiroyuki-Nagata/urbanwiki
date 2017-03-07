@@ -16,8 +16,14 @@
             [wiki.view.default.default :as default]
             [wiki.view.default.header :as header]))
 
+;;
 ;; スレッドごとのwiki情報を管理する
-(defonce wiki-initial-state {:title "" :edit 0 :params {}})
+;;
+(defonce wiki-initial-state {:title ""
+                             :edit 0
+                             :params {}
+                             :session {}})
+
 (def wiki-local-state (thread-local (atom wiki-initial-state)))
 
 (defn clear-local-state []
@@ -39,6 +45,14 @@
 
 (defn params []
   (:params @@wiki-local-state))
+
+(defn sessions []
+  (:session @@wiki-local-state))
+
+;;
+;; スレッドごとのwiki情報終わり
+;; --------------------------------------------------------------------------------
+
 
 ;; フックプラグインを登録します。登録したプラグインはdo-hookメソッドで呼び出します。
 (defn add-hook [name obj]
@@ -175,9 +189,9 @@
     (:content (first content))))
 
 (defn ok [body req]
-  (debug (str "session value: " (:session req) " params: " (:page (params)) " cookies: " (:cookies req)))
+  (debug (str "session value: " (sessions) " params: " (:page (params)) " cookies: " (:cookies req)))
   {:status 200
-   :session {:page (:page (params))}
+   :session (merge (sessions) {:page (:page (params))})
    :body body })
 
 (defn html [res]
@@ -206,9 +220,11 @@
 (defn wiki-index [req]
   ;; GETの場合, 事前にこのスレッドにおけるクエリをparamsに格納
   (when (not (blank? (:query-string req)))
-    (let [ps (keywordize-keys (form-decode (:query-string req)))]
+    (let [ps (keywordize-keys (form-decode (:query-string req)))
+          se (:session req)]
       (debug (str "query-params: " ps))
-      (update-local-state :params ps)))
+      (update-local-state :params ps)
+      (update-local-state :session se)))
   (-> (wiki-index-view req)
       (ok req)
       html))
@@ -216,9 +232,11 @@
 (defn wiki-action [req]
   ;; POSTの場合
   (let [body (slurp (:body req) :encoding "utf-8")
-        ps (keywordize-keys (form-decode body "utf-8"))]
+        ps (keywordize-keys (form-decode body "utf-8"))
+        se (:session req)]
     (debug (str "form-params: " ps))
-    (update-local-state :params ps))
+    (update-local-state :params ps)
+    (update-local-state :session se))
   (-> (wiki-index-view req)
       (ok req)
       html))

@@ -19,6 +19,10 @@
         pass (or (:pass params) "")]
     (if (wiki/login id pass)
       ;; ログイン成功
-      "Succeed to login !"
+      (let [se (wiki/sessions)
+            update-se (merge se {:wiki_id id})]
+        (wiki/update-local-state :session update-se)
+        (debug (str "Succeed to login, user: " id))
+        "Succeed to login !")
       ;; ログインしていないのでログインフォームへ
       (default req))))
