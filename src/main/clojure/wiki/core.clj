@@ -9,10 +9,11 @@
             [ring.adapter.jetty :as server]
             [ring.util.response :as res]
             [ring.middleware.resource :refer [wrap-resource]]
-            [wiki.plugin.core.install]
             [wiki.middleware :refer [wrap-dev]]
             [wiki.wiki :refer [wiki-routes]]
-            [wiki.default-storage :as db]))
+            [wiki.default-storage :as db]
+            [wiki.plugin.core.install]
+            [wiki.plugin.admin.install]))
 
 (defonce server (atom nil))
 
@@ -61,6 +62,7 @@
     (warn "Urbanwiki failed to connect MongoDB..."))
   ;; プラグインパッケージからinstall関数をテストで呼び出し
   (wiki.plugin.core.install/install)
+  (wiki.plugin.admin.install/install)
 
   (start-server
    :host (get args "host") :port (get args "port") :join? true))
