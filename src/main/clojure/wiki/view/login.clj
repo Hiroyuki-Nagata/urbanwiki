@@ -1,5 +1,4 @@
 (ns wiki.view.login
-  (:use [clojure.string])
   (:require [hiccup.page]))
 
 (defn login-tmpl [url page]

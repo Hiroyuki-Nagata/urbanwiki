@@ -1,8 +1,9 @@
-{:handler {}
- :handler_permission {}
- :menu []
- :admin_menu []
- :hook []
+{:admin_menu []
  :frontpage "FrontPage"
+ :handler {}
+ :handler_permission {}
+ :hook []
+ :menu []
+ :nest {:test "testing"}
  :script_name "wiki.cgi"
- :nest {:test "testing"}}
+ :user []}

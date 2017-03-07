@@ -1,5 +1,6 @@
 (ns wiki.wiki-test
   (:require [clojure.test :refer :all]
+            [noir.util.crypt :only [md5]]
             [wiki.wiki :refer :all]
             [wiki.default-storage :as db]))
 
@@ -34,3 +35,10 @@
   (testing "We should call handler with call-handler"
     (let [response (call-handler "TEST" nil)]
       (is (= "Hello, Hook system !" response)))))
+
+(deftest add-user-test
+  (db/init-config)
+  (testing "We should call add-user"
+    (add-user "admin" "password" :admin)
+    (add-user "user" "password" :user))
+  (is (= 2 (count (db/load-config :user)))))

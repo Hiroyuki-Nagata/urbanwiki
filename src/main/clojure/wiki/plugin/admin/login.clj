@@ -10,7 +10,7 @@
 (defn default [req]
   (debug "Called login/default")
   (let [page-name (:page (wiki/params))]
-    (login-tmpl "xxx" page-name)))
+    (login-tmpl (wiki/create-url) page-name)))
 
 (defn do-action [req]
   (debug "Called login/do-action")

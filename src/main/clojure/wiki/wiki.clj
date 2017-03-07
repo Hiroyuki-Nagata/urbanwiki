@@ -1,13 +1,13 @@
 (ns wiki.wiki
   (:gen-class
    :main false)
-  (:use
-   clojure.walk
-   clojure.tools.logging
-   flatland.useful.utils
-   ring.middleware.session
-   markdown.core
-   wiki.html-parser)
+  (:use [clojure.walk]
+        [clojure.tools.logging]
+        [flatland.useful.utils]
+        [ring.middleware.session]
+        [markdown.core]
+        [noir.util.crypt :only [md5]]
+        [wiki.html-parser])
   (:require [clojure.string :refer [blank?]]
             [compojure.core :refer [defroutes context GET POST]]
             [compojure.route :as route]
@@ -146,6 +146,16 @@
 
 (defn get-title []
   (get-local-state :title))
+
+;; ユーザーをメモリDBに追加
+(defn add-user [id pass type]
+  (db/append-config
+   {:user
+    {:id id :pass (md5 pass id) :type type}}))
+
+;; ユーザーがログインしているか
+(defn logged-in? [id pass]
+  )
 
 ;; 引数で渡したWikiフォーマットの文字列をHTMLに変換して返します。
 ;; TODO: とりあえず今はMaekdownのみ対応
