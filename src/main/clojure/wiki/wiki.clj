@@ -153,9 +153,12 @@
    {:user
     {:id id :pass (md5 pass id) :type type}}))
 
-;; ユーザーがログインしているか
-(defn logged-in? [id pass]
-  )
+;; ログインチェック
+(defn login [id pass]
+  (= 1 (count
+        (filter (and #(= (:id %) id)
+                     #(= (:pass %) (md5 pass id)))
+                (db/load-config :user)))))
 
 ;; 引数で渡したWikiフォーマットの文字列をHTMLに変換して返します。
 ;; TODO: とりあえず今はMaekdownのみ対応
