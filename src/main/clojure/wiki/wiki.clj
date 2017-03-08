@@ -174,6 +174,21 @@
                      #(= (:pass %) (md5 pass id)))
                 (db/load-config :user)))))
 
+;; ログイン情報取得
+(defn get-login-info [req]
+  (let [session-id (get-in req [:cookies "ring-session" :value])
+        login-info (first (filter #(= (:session-id %) session-id) (db/load-config :login_info)))
+        params (params)
+        id (or (:wiki_id params) "")
+        nw-login-info {:session_id session-id :id id }]
+
+    (debug (str "session id: " session-id))
+    (if (blank? id)
+      nil
+      (do
+        (db/append-config {:login_info nw-login-info})
+        nw-login-info))))
+
 ;; 引数で渡したWikiフォーマットの文字列をHTMLに変換して返します。
 ;; TODO: とりあえず今はMaekdownのみ対応
 (defn process-wiki [source]

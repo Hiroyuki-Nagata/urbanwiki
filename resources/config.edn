@@ -3,6 +3,7 @@
  :handler {}
  :handler_permission {}
  :hook []
+ :login_info []
  :menu []
  :nest {:test "testing"}
  :script_name "wiki.cgi"

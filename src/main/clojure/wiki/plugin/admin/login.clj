@@ -14,6 +14,9 @@
 
 (defn do-action [req]
   (debug "Called login/do-action")
+
+  (wiki/get-login-info req)
+
   (let [params (wiki/params)
         id (or (:id params) "")
         pass (or (:pass params) "")
