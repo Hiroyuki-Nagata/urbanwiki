@@ -13,11 +13,11 @@
     (login-tmpl (wiki/create-url) page-name)))
 
 (defn admin-form [login-info]
-  ;;(if (= (:id login-info) :admin)
-  (let [admin-menus (wiki/get-admin-menu)]
+  (let [admin-menus (wiki/get-admin-menu)
+        user-menus (filter #(not= (:type %) :admin) admin-menus)]
     [:div
      [:ul
-      (for [menu admin-menus]
+      (for [menu (if (= (:id login-info) :admin) admin-menus user-menus)]
         [:li
          [:a {:href (:url menu)} (:label menu)] (str " - " (:desc menu))])]
      [:form {:action (wiki/create-url) :method "post"}
