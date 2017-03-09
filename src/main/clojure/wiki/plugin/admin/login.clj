@@ -17,7 +17,7 @@
         user-menus (filter #(not= (:type %) :admin) admin-menus)]
     [:div
      [:ul
-      (for [menu (if (= (:id login-info) :admin) admin-menus user-menus)]
+      (for [menu admin-menus]
         [:li
          [:a {:href (:url menu)} (:label menu)] (str " - " (:desc menu))])]
      [:form {:action (wiki/create-url) :method "post"}

@@ -44,4 +44,13 @@
   (wiki/add-admin-menu "スパム対策"
                        (wiki/create-url { :action "ADMINSPAM" })
                        991
-                       "スパム対策用の設定を行います。"))
+                       "スパム対策用の設定を行います。")
+
+  (wiki/add-admin-handler "ADMINPAGE"    "wiki.plugin.admin.admin-page-handler")
+  (wiki/add-admin-handler "ADMINDELETED" "wiki.plugin.admin.admin-deleted-page-handler")
+  (wiki/add-admin-handler "ADMINLOG"     "wiki.plugin.admin.admin-log-handler")
+  (wiki/add-admin-handler "ADMINCONFIG"  "wiki.plugin.admin.admin-config-handler")
+  (wiki/add-admin-handler "ADMINUSER"    "wiki.plugin.admin.admin-user-handler")
+  (wiki/add-admin-handler "ADMINPLUGIN"  "wiki.plugin.admin.admin-plugin-handler")
+  (wiki/add-admin-handler "ADMINSTYLE"   "wiki.plugin.admin.admin-style-handler")
+  (wiki/add-admin-handler "ADMINSPAM"    "wiki.plugin.admin.admin-spam-handler"))
