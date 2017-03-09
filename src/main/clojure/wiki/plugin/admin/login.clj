@@ -15,14 +15,14 @@
 (defn admin-form [login-info]
   ;;(if (= (:id login-info) :admin)
   (let [admin-menus (wiki/get-admin-menu)]
-    [:ul
-     (for [menu admin-menus]
-       [:li
-        [:a {:href (:url menu)} (str (:label menu) " - " (:desc menu))]
-        ])]
-    [:form {:action (wiki/create-url) :method "post"}
-     [:input {:type "submit" :name "logout" :value "ログアウト"}]
-     [:input {:type "hidden" :name "action" :value "LOGIN"}]]))
+    [:div
+     [:ul
+      (for [menu admin-menus]
+        [:li
+         [:a {:href (:url menu)} (:label menu)] (str " - " (:desc menu))])]
+     [:form {:action (wiki/create-url) :method "post"}
+      [:input {:type "submit" :name "logout" :value "ログアウト"}]
+      [:input {:type "hidden" :name "action" :value "LOGIN"}]]]))
 
 (defn do-action [req]
   (debug "Called login/do-action")

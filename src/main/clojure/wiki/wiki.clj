@@ -144,11 +144,11 @@
     ;; キーがなければそのまま追加
     (db/append-config
      {:admin_menu
-      {:label label :url url :weight weight :desc desc :type 0 }})
+      {:label label :url url :weight weight :desc desc :type :admin }})
     ;; あればキーで更新する
     (db/update-config-with-key
      {:admin_menu
-      {:label label :url url :weight weight :desc desc :type 0 }} :label label))
+      {:label label :url url :weight weight :desc desc :type :admin }} :label label))
   (info (str "add-admin-menu: result: " (pr-str (filter (has-value :label label) (db/load-config :admin_menu))))))
 
 (defn get-admin-menu []
