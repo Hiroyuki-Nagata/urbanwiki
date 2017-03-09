@@ -12,23 +12,36 @@
   (let [page-name (:page (wiki/params))]
     (login-tmpl (wiki/create-url) page-name)))
 
+(defn admin-form [login-info]
+  ;;(if (= (:id login-info) :admin)
+  (let [admin-menus (wiki/get-admin-menu)]
+    [:ul
+     (for [menu admin-menus]
+       [:li
+        [:a {:href (:url menu)} (str (:label menu) " - " (:desc menu))]
+        ])]
+    [:form {:action (wiki/create-url) :method "post"}
+     [:input {:type "submit" :name "logout" :value "ログアウト"}]
+     [:input {:type "hidden" :name "action" :value "LOGIN"}]]))
+
 (defn do-action [req]
   (debug "Called login/do-action")
-
-  (wiki/get-login-info req)
-
-  (let [params (wiki/params)
-        id (or (:id params) "")
-        pass (or (:pass params) "")
-        page (or (:page params) "")]
-    (if (wiki/login id pass)
-      ;; ログイン成功
-      (let [se (wiki/sessions)
-            update-se (merge se {:wiki_id id})]
-        (wiki/update-local-state :session update-se)
-        (debug (str "Succeed to login, user: " id))
-        (if (blank? page)
-          "Succeed to login !"
-          (redirect (wiki/create-page-url page))))
-      ;; ログインしていないのでログインフォームへ
-      (default req))))
+  (if-let [login-info (wiki/get-login-info req)]
+    ;; ログイン済み
+    (admin-form login-info)
+    ;; 未ログイン or これからログイン
+    (let [params (wiki/params)
+          id (or (:id params) "")
+          pass (or (:pass params) "")
+          page (or (:page params) "")]
+      (if (wiki/login id pass)
+        ;; ログイン成功
+        (let [se (wiki/sessions)
+              update-se (merge se {:wiki_id id})]
+          (wiki/update-local-state :session update-se)
+          (debug (str "Succeed to login, user: " id))
+          (if (blank? page)
+            "Succeed to login !"
+            (redirect (wiki/create-page-url page))))
+        ;; ログインしていないのでログインフォームへ
+        (default req)))))

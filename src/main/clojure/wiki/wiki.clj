@@ -151,6 +151,9 @@
       {:label label :url url :weight weight :desc desc :type 0 }} :label label))
   (info (str "add-admin-menu: result: " (pr-str (filter (has-value :label label) (db/load-config :admin_menu))))))
 
+(defn get-admin-menu []
+  (db/load-config :admin_menu))
+
 ;; アクションハンドラ中でタイトルを設定する場合に使用します。
 ;; 編集系の画面の場合、第二引数に1を指定してください。
 ;; ロボット対策用に以下のMETAタグが出力されます。
@@ -179,13 +182,16 @@
   (let [session-id (get-in req [:cookies "ring-session" :value])
         login-info (first (filter #(= (:session-id %) session-id) (db/load-config :login_info)))
         params (params)
-        id (or (:wiki_id params) "")
+        id (or (:id params) "")
         nw-login-info {:session_id session-id :id id }]
 
     (debug (str "session id: " session-id))
     (if (blank? id)
-      nil
       (do
+        (debug "not logged-in")
+        nil)
+      (do
+        (debug "now login")
         (db/append-config {:login_info nw-login-info})
         nw-login-info))))
 
