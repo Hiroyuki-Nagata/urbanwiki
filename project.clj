@@ -11,6 +11,7 @@
                  [org.slf4j/slf4j-api "1.7.0"]
                  [ch.qos.logback/logback-classic "1.0.13"]
                  ;; end logging library
+                 [factual/fnparse "2.3.0"]
                  [lib-noir/lib-noir "0.9.9"]
                  [compojure/compojure "1.4.0"]
                  [environ/environ "1.0.3"]
