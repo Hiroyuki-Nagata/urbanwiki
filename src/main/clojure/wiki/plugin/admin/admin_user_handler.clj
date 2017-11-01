@@ -1,3 +1,6 @@
+;;
+;; ユーザ管理を行うアクションハンドラ
+;;
 (ns wiki.plugin.admin.admin-user-handler
   (:use
    clojure.tools.logging)

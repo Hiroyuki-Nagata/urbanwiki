@@ -1,3 +1,6 @@
+;;
+;; ページを管理するモジュール
+;;
 (ns wiki.plugin.admin.admin-deleted-page-handler
   (:use
    clojure.tools.logging)

@@ -1,3 +1,6 @@
+;;
+;; FSWikiの動作設定を行うアクションハンドラ
+;;
 (ns wiki.plugin.admin.admin-config-handler
   (:use
    [clojure.tools.logging]

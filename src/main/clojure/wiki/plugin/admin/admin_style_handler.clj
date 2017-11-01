@@ -1,3 +1,6 @@
+;;
+;; FSWikiのスタイル設定を行うアクションハンドラ
+;;
 (ns wiki.plugin.admin.admin-style-handler
   (:use
    [clojure.tools.logging]

@@ -1,3 +1,6 @@
+;;
+;; プラグインの設定を行うアクションハンドラ
+;;
 (ns wiki.plugin.admin.admin-plugin-handler
   (:use [clojure.tools.logging]
         [noir.response :only [redirect]])

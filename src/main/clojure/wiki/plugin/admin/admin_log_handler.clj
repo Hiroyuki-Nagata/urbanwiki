@@ -1,3 +1,6 @@
+;;
+;; ログファイルを管理するモジュール
+;;
 (ns wiki.plugin.admin.admin-log-handler
   (:use
    clojure.tools.logging)

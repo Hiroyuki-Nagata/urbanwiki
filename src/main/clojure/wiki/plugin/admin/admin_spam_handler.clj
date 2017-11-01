@@ -1,3 +1,6 @@
+;;
+;; スパム対策の設定を行うアクションハンドラ
+;;
 (ns wiki.plugin.admin.admin-spam-handler
   (:use
    [clojure.tools.logging]
