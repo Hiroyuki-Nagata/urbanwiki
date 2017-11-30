@@ -22,7 +22,9 @@
                  [org.flatland/useful "0.11.5"]
                  [org.clojure/clojure "1.8.0"]
                  [prone/prone "0.8.2"]
-                 [ring/ring "1.4.0"]]
+                 [ring/ring "1.4.0"]
+                 ;; testing with H2 backend MongoDB
+                 [de.bwaldvogel/mongo-java-server-h2-backend "1.7.0"]]
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
   :java-source-paths ["src/main/java"]

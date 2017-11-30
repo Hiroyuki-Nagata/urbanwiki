@@ -1,6 +1,8 @@
 (ns wiki.core
   (:gen-class main true)
-  (:import (java.util.logging Logger Level))
+  (:import [java.util.logging Logger Level]
+           [de.bwaldvogel.mongo MongoServer]
+           [de.bwaldvogel.mongo.backend.h2 H2Backend])
   (:use [clojure.tools.logging]
         [ring.middleware.session]
         [wiki.wiki :refer [wiki-routes]])
@@ -13,7 +15,8 @@
             ;;[wiki.wiki :refer [wiki-routes]]
             [wiki.default-storage :as db]
             [wiki.plugin.core.install]
-            [wiki.plugin.admin.install]))
+            [wiki.plugin.admin.install]
+            ))
 
 (defonce server (atom nil))
 
@@ -46,6 +49,13 @@
     (stop-server)
     (start-server)))
 
+(defn start-mongodb-h2 []
+  (let [ ;;h2 (new H2Backend("database.mv"))
+        mongo (new MongoServer(new H2Backend("database.mv")))]
+    (info "Prepare file-based MongoDB !!!")
+    (. mongo bind("localhost" 27017))
+    (info "Start file-based MongoDB !!!")))
+
 (defonce wiki-instance (atom nil))
 
 (defn -main [& {:as args}]
@@ -59,6 +69,10 @@
   ;; 初期ユーザーを登録
   (wiki.wiki/add-user "admin" "admin" :admin)
   (wiki.wiki/add-user "user" "user" :user)
+
+  ;; 開発環境かどうか？
+  ;;(if (db/mongodb-is-dev?)
+  ;;  (start-mongodb-h2))
 
   ;; MongoDB接続確認
   (if (db/mongodb-connected?)

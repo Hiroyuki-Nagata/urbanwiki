@@ -26,6 +26,14 @@
       (mg/connect-with-credentials (str host ":" port) (mcred/create user db pass))
       )))
 
+(defn mongodb-is-dev? []
+  (let [db   (or (System/getenv "DB_NAME") "urbanwiki")
+        user (or (System/getenv "DB_USER") "")
+        pass (or (System/getenv "DB_PASS") "")
+        host (or (System/getenv "DB_HOST") "127.0.0.1")
+        port (Integer/parseInt (or (System/getenv "DB_PORT") "27017"))]
+    (or (str/blank? user) (str/blank? pass))))
+
 (defn mongodb-connected? []
   (not (nil? (mongodb-conn))))
 
