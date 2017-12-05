@@ -6,3 +6,4 @@ pom.xml
 *.class
 /.lein-*
 /.nrepl-port
+*.mv

@@ -11,7 +11,7 @@
             [monger.query :refer [with-collection fields]]
             [immuconf.config :as cfg]))
 
-;; Monger! return MongoDB's connection
+;; Monger! return MongoDBs connection
 (defn mongodb-conn []
   (let [db   (or (System/getenv "DB_NAME") "urbanwiki")
         user (or (System/getenv "DB_USER") "")

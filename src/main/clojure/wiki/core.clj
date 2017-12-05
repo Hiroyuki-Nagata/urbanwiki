@@ -50,10 +50,9 @@
     (start-server)))
 
 (defn start-mongodb-h2 []
-  (let [ ;;h2 (new H2Backend("database.mv"))
-        mongo (new MongoServer(new H2Backend("database.mv")))]
+  (let [mongo (new MongoServer(new H2Backend "database.mv"))]
     (info "Prepare file-based MongoDB !!!")
-    (. mongo bind("localhost" 27017))
+    (. mongo bind "localhost" 27017)
     (info "Start file-based MongoDB !!!")))
 
 (defonce wiki-instance (atom nil))
@@ -71,8 +70,8 @@
   (wiki.wiki/add-user "user" "user" :user)
 
   ;; 開発環境かどうか？
-  ;;(if (db/mongodb-is-dev?)
-  ;;  (start-mongodb-h2))
+  (if (db/mongodb-is-dev?)
+    (start-mongodb-h2))
 
   ;; MongoDB接続確認
   (if (db/mongodb-connected?)
